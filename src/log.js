@@ -8,19 +8,19 @@ export class Log {
 
 
  static debug(...args) {
-  addLog(args, 0)
+  this.addLog(args, 0)
  }
 
  static info(...args) {
-  addLog(args, 1)
+  this.addLog(args, 1)
  }
 
  static warning(...args) {
-  addLog(args, 2)
+  this.addLog(args, 2)
  }
 
  static error(...args) {
-  addLog(args, 3)
+  this.addLog(args, 3)
  }
 
 

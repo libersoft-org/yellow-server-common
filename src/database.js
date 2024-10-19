@@ -21,7 +21,7 @@ class Database {
    Log.info('Connected to the database');
  }
 
- async reconnect() {
+ /*async reconnect() {
   if (this.conn) {
    try {
     await this.conn.end();
@@ -31,35 +31,15 @@ class Database {
   }
   this.conn = null;
   await this.connect();
- }
+ }*/
 
  async execute(callback) {
-
-  Log.info('db.execute');
-
-  try {
-   if (!this.conn)
-   {
-    await this.connect();
-    Log.info('Connected: ' + JSON.stringify(this.conn));
-   }
-   else {
-    try {
-     await this.conn.ping();
-    } catch (err) {
-     Log.error('Connection lost: ' + err.message);
-     await this.reconnect();
-     Log.info('Reconnected: ' + JSON.stringify(this.conn));
-    }
-   }
-   Log.info('callback: ' + callback);
-   const result = await callback(this.conn);
-   Log.info('result: ' + JSON.stringify(result));
-   return result;
-  } catch (ex) {
-   Log.error(ex.message);
-   return null;
+  if (!this.conn) {
+   await this.connect();
   }
+   const result = await callback(this.conn);
+   Log.debug('result: ' + JSON.stringify(result));
+   return result;
  }
 
  async query(command, params = []) {
