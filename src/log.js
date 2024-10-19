@@ -23,6 +23,7 @@ export class Log {
   this.addLog(args, 3)
  }
 
+ 
  static addLog(message, type = 0) {
 
   if (typeof message === 'array') {
