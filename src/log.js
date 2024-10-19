@@ -6,7 +6,6 @@ export class Log {
  static settings;
  static appPath;
 
-
  static debug(...args) {
   this.addLog(args, 0)
  }
@@ -23,9 +22,7 @@ export class Log {
   this.addLog(args, 3)
  }
 
- 
  static addLog(message, type = 0) {
-
   if (typeof message === 'array') {
    let msg = '';
    for (const v of message) {
@@ -33,7 +30,6 @@ export class Log {
     msg += JSON.stringify(v);
    }
   }
-
   const d = new Date();
   const date = d.toLocaleString('sv-SE').replace('T', ' ');
   const logTypes = [
