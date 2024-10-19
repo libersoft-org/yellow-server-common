@@ -46,7 +46,7 @@ class Database {
  async query(command, params = []) {
   Log.debug('query: ' + command + ' ' + params);
   return await this.execute(async conn => {
-   Log.debug('conn: ' + JSON.stringify(conn));
+   Log.debug('conn: ', conn);
    const result = await conn.query(command, params);
    Log.debug('result: ', result);
    return result;

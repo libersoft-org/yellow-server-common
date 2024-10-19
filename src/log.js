@@ -24,31 +24,7 @@ export class Log {
   this.addLog(args, 3)
  }
 
- static safeStringify(obj) {
-    const seen = new WeakSet();
-    return JSON.stringify(obj, function(key, value) {
-        if (typeof value === "object" && value !== null) {
-            if (seen.has(value)) {
-                return; // Ignore circular reference
-            }
-            seen.add(value);
-        }
-        return value;
-    }, 2);
-}
-
-
  static addLog(obj, type = 0) {
-//console.log(obj);
-  let message = '';
-  for (const v of obj) {
-   if (message !== '') message += ', ';
-   if (typeof v === 'object') {
-    message += this.safeStringify(v);
-   }
-   else
-    message += v;
-  }
 
   const d = new Date();
   const date = d.toLocaleString('sv-SE').replace('T', ' ');
@@ -58,13 +34,16 @@ export class Log {
    {text: 'WARNING', color: '\x1b[33m'},
    {text: 'ERROR', color: '\x1b[31m'}
   ];
-  const msg = message ?? '';
 
   const inspected = obj.map((o) => {if (typeof o === 'string') return o; else return util.inspect(o, {showHidden: false, depth: null, colors: true})});
   const obj2 = ['\x1b[96m' + date + '\x1b[0m [' + logTypes[type].color + logTypes[type].text + '\x1b[0m] ', ...inspected];
   console.log(...obj2);
 
-
+  const inspected_nocolor = obj.map((o) => {if (typeof o === 'string') return o; else return util.inspect(o, {showHidden: false, depth: null, colors: false})});
+  let msg = '';
+  for (const v of inspected_nocolor) {
+   msg += v + ' ';
+  }
   //console.log(obj);
   if (this.settings?.other?.log_to_file) {
    let file;
