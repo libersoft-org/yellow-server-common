@@ -30,6 +30,7 @@ export class Log {
     msg += JSON.stringify(v);
    }
   }
+
   const d = new Date();
   const date = d.toLocaleString('sv-SE').replace('T', ' ');
   const logTypes = [
