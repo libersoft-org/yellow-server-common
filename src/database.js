@@ -18,7 +18,7 @@ class Database {
 
  async connect() {
    this.conn = await mariaDB.createConnection(this.connectionConfig);
-   Log.addLog('Connected to the database');
+   Log.info('Connected to the database');
  }
 
  async reconnect() {
@@ -26,7 +26,7 @@ class Database {
    try {
     await this.conn.end();
    } catch (ex) {
-    Log.addLog('Error while disconnecting: ' + ex.message, 2);
+    Log.error('Error while disconnecting: ' + ex.message);
    }
   }
   this.conn = null;
@@ -35,37 +35,37 @@ class Database {
 
  async execute(callback) {
 
-  Log.addLog('db.execute');
+  Log.info('db.execute');
 
   try {
    if (!this.conn)
    {
     await this.connect();
-    Log.addLog('Connected: ' + JSON.stringify(this.conn));
+    Log.info('Connected: ' + JSON.stringify(this.conn));
    }
    else {
     try {
      await this.conn.ping();
     } catch (err) {
-     Log.addLog('Connection lost: ' + err.message, 2);
+     Log.error('Connection lost: ' + err.message);
      await this.reconnect();
-     Log.addLog('Reconnected: ' + JSON.stringify(this.conn));
+     Log.info('Reconnected: ' + JSON.stringify(this.conn));
     }
    }
-   Log.addLog('callback: ' + callback);
+   Log.info('callback: ' + callback);
    const result = await callback(this.conn);
-   Log.addLog('result: ' + JSON.stringify(result));
+   Log.info('result: ' + JSON.stringify(result));
    return result;
   } catch (ex) {
-   Log.addLog(ex.message, 2);
+   Log.error(ex.message);
    return null;
   }
  }
 
  async query(command, params = []) {
-  Log.addLog('query: ' + command + ' ' + params);
+  Log.info('query: ' + command + ' ' + params);
   return await this.execute(async conn => {
-   Log.addLog('conn: ' + JSON.stringify(conn));
+   Log.info('conn: ' + JSON.stringify(conn));
    const result = await conn.query(command, params);
    return result;
   });
