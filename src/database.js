@@ -10,7 +10,9 @@ class Database {
    user: this.settings.user,
    password: this.settings.password,
    database: this.settings.name,
-   bigIntAsNumber: true
+   bigIntAsNumber: true,
+   metaAsArray: false,
+   rowsAsArray: true
   };
   this.conn = null;
   this.connecting = false;
@@ -38,7 +40,6 @@ class Database {
    await this.connect();
   }
    const result = await callback(this.conn);
-   Log.debug('result: ' + JSON.stringify(result));
    return result;
  }
 
@@ -47,6 +48,7 @@ class Database {
   return await this.execute(async conn => {
    Log.debug('conn: ' + JSON.stringify(conn));
    const result = await conn.query(command, params);
+   Log.debug('result: ', result);
    return result;
   });
  }

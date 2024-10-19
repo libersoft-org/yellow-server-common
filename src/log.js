@@ -1,6 +1,8 @@
 import os from 'os';
 import fs from 'fs';
 import path from 'path';
+import util from 'util';
+
 
 export class Log {
  static settings;
@@ -22,13 +24,30 @@ export class Log {
   this.addLog(args, 3)
  }
 
- static addLog(message, type = 0) {
-  if (typeof message === 'array') {
-   let msg = '';
-   for (const v of message) {
-    if (msg !== '') msg += ', ';
-    msg += JSON.stringify(v);
+ static safeStringify(obj) {
+    const seen = new WeakSet();
+    return JSON.stringify(obj, function(key, value) {
+        if (typeof value === "object" && value !== null) {
+            if (seen.has(value)) {
+                return; // Ignore circular reference
+            }
+            seen.add(value);
+        }
+        return value;
+    }, 2);
+}
+
+
+ static addLog(obj, type = 0) {
+//console.log(obj);
+  let message = '';
+  for (const v of obj) {
+   if (message !== '') message += ', ';
+   if (typeof v === 'object') {
+    message += this.safeStringify(v);
    }
+   else
+    message += v;
   }
 
   const d = new Date();
@@ -40,7 +59,13 @@ export class Log {
    {text: 'ERROR', color: '\x1b[31m'}
   ];
   const msg = message ?? '';
-  console.log('\x1b[96m' + date + '\x1b[0m [' + logTypes[type].color + logTypes[type].text + '\x1b[0m] ' + msg);
+
+  const inspected = obj.map((o) => {if (typeof o === 'string') return o; else return util.inspect(o, {showHidden: false, depth: null, colors: true})});
+  const obj2 = ['\x1b[96m' + date + '\x1b[0m [' + logTypes[type].color + logTypes[type].text + '\x1b[0m] ', ...inspected];
+  console.log(...obj2);
+
+
+  //console.log(obj);
   if (this.settings?.other?.log_to_file) {
    let file;
    if (this.settings.other.log_file.startsWith('/')) {
