@@ -38,13 +38,16 @@ export class Log {
   const inspected = obj.map((o) => {if (typeof o === 'string') return o; else return util.inspect(o, {showHidden: false, depth: null, colors: true})});
   const obj2 = ['\x1b[96m' + date + '\x1b[0m [' + logTypes[type].color + logTypes[type].text + '\x1b[0m] ', ...inspected];
   console.log(...obj2);
+  if (type === 3) {
+   console.error(...obj)
+  }
 
   const inspected_nocolor = obj.map((o) => {if (typeof o === 'string') return o; else return util.inspect(o, {showHidden: false, depth: null, colors: false})});
   let msg = '';
   for (const v of inspected_nocolor) {
    msg += v + ' ';
   }
-  //console.log(obj);
+
   if (this.settings?.other?.log_to_file) {
    let file;
    if (this.settings.other.log_file.startsWith('/')) {
