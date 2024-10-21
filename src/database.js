@@ -12,7 +12,6 @@ class Database {
    database: this.settings.name,
    bigIntAsNumber: true,
    metaAsArray: false,
-   rowsAsArray: true
   };
   this.conn = null;
   this.connecting = false;
