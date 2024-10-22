@@ -14,7 +14,6 @@ class Database {
    metaAsArray: false,
   };
   this.conn = null;
-  this.connecting = false;
  }
 
  async connect() {
