@@ -3,7 +3,12 @@ import Log from './log.js';
 
 class Database {
  constructor(settings) {
+
+  if (!settings) {
+   throw new Error('Database settings are missing');
+  }
   this.settings = settings;
+
   this.connectionConfig = {
    host: this.settings.host,
    port: this.settings.port,
@@ -42,11 +47,11 @@ class Database {
  }
 
  async query(command, params = []) {
-  Log.debug('query: ' + command + ' ' + params);
+  //Log.debug('query: ' + command + ' ' + params);
   return await this.execute(async conn => {
-   Log.debug('conn: ', conn);
+   //Log.debug('conn: ', conn);
    const result = await conn.query(command, params);
-   Log.debug('result: ', result);
+   //Log.debug('result: ', result);
    return result;
   });
  }
