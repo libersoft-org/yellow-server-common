@@ -26,6 +26,14 @@ class Database {
    Log.info('Connected to the database');
  }
 
+ async disconnect() {
+  if (this.conn) {
+   await this.conn.end();
+   this.conn = null;
+   Log.info('Disconnected from the database');
+  }
+ }
+
  /*async reconnect() {
   if (this.conn) {
    try {

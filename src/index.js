@@ -1,6 +1,7 @@
 
 import Database from './database.js';
+import DataGeneric from './data-generic.js';
 import { Log } from './log.js';
 
-export { Database, Log } ;
+export { Database,DataGeneric, Log } ;
 
