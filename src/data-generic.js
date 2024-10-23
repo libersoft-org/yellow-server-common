@@ -1,9 +1,8 @@
-import { Database, Log } from 'yellow-server-common';
-import { Info } from './info.js';
+import Database from './database.js';
 
 class DataGeneric {
- constructor() {
-  this.db = new Database(Info.settings.database);
+ constructor(settings) {
+  this.db = new Database(settings);
  }
 
  async close() {
@@ -15,3 +14,4 @@ class DataGeneric {
  }
 }
 
+export default DataGeneric;
