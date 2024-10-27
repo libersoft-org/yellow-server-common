@@ -61,7 +61,7 @@ export class ModuleApiBase {
 
     if (req.type === 'response') {
       let requestID = req.requestID;
-      let cb = this.core.requests[requestID];
+      let cb = this.core.requests.get(requestID);
       Log.debug('result from core for requestID:', requestID, req.result);
       if (cb) {
         cb(req.result);
@@ -71,10 +71,12 @@ export class ModuleApiBase {
         Log.warning('requests:', this.core.requests);
         Log.warning('requestID:', requestID);
         Log.warning('typeof requestID:', typeof requestID);
-        for (let key in this.core.requests) {
+        for (let kv of this.core.requests) {
+          let key = kv[0];
           Log.warning('key:', key);
           Log.warning('typeof key:', typeof key);
           Log.warning('key === requestID:', key === requestID);
+          Log.warning('key == requestID:', key == requestID);
         }
         Log.warning('cb:', cb);
         Log.warning('this.core:', this.core);
