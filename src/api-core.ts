@@ -18,6 +18,7 @@ export class ApiCore {
   }
 
   async call(command: string, params: any[]): Promise<any> {
+
     const requestID = Math.random().toString(36);
     const msg = { type: 'command', command, params, requestID };
 

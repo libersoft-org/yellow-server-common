@@ -68,6 +68,16 @@ export class ModuleApiBase {
         delete this.core.requests[requestID];
       } else {
         Log.warning('No callback for the response:', req);
+        Log.warning('requests:', this.core.requests);
+        Log.warning('requestID:', requestID);
+        Log.warning('typeof requestID:', typeof requestID);
+        for (let key in this.core.requests) {
+          Log.warning('key:', key);
+          Log.warning('typeof key:', typeof key);
+          Log.warning('key === requestID:', key === requestID);
+        }
+        Log.warning('cb:', cb);
+        Log.warning('this.core:', this.core);
       }
       return;
     } else if (req.type === 'request') {
