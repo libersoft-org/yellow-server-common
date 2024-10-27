@@ -2,14 +2,13 @@ import { Log } from './log';
 import path from 'path';
 
 
-class App {
- constructor(info, data) {
-  this.data = data;
+export class ModuleAppBase {
+ constructor(info) {
   this.info = {
-   appName: 'Yellow Server Module';
-   appVersion: '0.01';
-   appPath: path.dirname(import.meta.dir) + '/';
-   settingsFile: import.meta.env.VITE_YELLOW_SETTINGS_PATH || path.join(path.dirname(import.meta.dir), 'settings.json');
+   appName: 'Yellow Server Module',
+   appVersion: '0.01',
+   appPath: path.dirname(import.meta.dir) + '/',
+   settingsFile: import.meta.env.VITE_YELLOW_SETTINGS_PATH || path.join(path.dirname(import.meta.dir), 'settings.json'),
    ...info
   }
   this.defaultSettings = {
@@ -56,6 +55,7 @@ class App {
    Log.info(header);
    Log.info(dashes);
    Log.info('');
+   await this.init();
    await this.checkDatabase();
    await Bun.serve({
     fetch: this.getFetch(),
@@ -151,11 +151,12 @@ class App {
 
  async createDatabase() {
   await this.loadSettings();
+  await this.init();
   await this.data.createDB();
   Log.info('Database creation completed.');
-  await data.close();
+  await this.data.close();
   process.exit(1);
  }
 }
 
-export default App;
+export default ModuleAppBase;

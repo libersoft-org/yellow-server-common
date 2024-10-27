@@ -30,14 +30,14 @@ interface Response {
 }
 
 export class ModuleApiBase {
-  private webServer: any;
+  private app: any;
   private clients: Map<string, any>;
   private core: ApiCore;
   private signals: Signals;
   private commands: { [key: string]: Command };
 
-  constructor(webServer: any, allowedEvents: string[]) {
-    this.webServer = webServer;
+  constructor(app: any, allowedEvents: string[]) {
+    this.app = app;
     this.clients = new Map();
     this.core = new ApiCore();
     this.signals = new Signals(
