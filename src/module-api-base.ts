@@ -1,5 +1,6 @@
-import { Log, Signals } from "yellow-server-common";
-import { ApiCore } from './api-core.js';
+import { Log } from './log';
+import { Signals } from './signals';
+import { ApiCore } from './api-core';
 import { Mutex } from 'async-mutex';
 
 interface Command {
@@ -28,14 +29,14 @@ interface Response {
   [key: string]: any;
 }
 
-class ModuleApiBase {
+export class ModuleApiBase {
   private webServer: any;
   private clients: Map<string, any>;
   private core: ApiCore;
   private signals: Signals;
   private commands: { [key: string]: Command };
 
-  constructor(webServer: any, allowedEvents: string[], commands: { [key: string]: Command }) {
+  constructor(webServer: any, allowedEvents: string[]) {
     this.webServer = webServer;
     this.clients = new Map();
     this.core = new ApiCore();
@@ -44,7 +45,10 @@ class ModuleApiBase {
       this.clients,
       (wsGuid: string, _clientData: any, msg: any) => this.core.send({ ...msg, type: 'notify', wsGuid })
     );
-    this.commands = commands;
+    this.commands ={
+       subscribe: { method: this.signals.subscribe.bind(this.signals) },
+       unsubscribe: { method: this.signals.unsubscribe.bind(this.signals) }
+    }
   }
 
   async processWsMessage(ws: any, json: string): Promise<Response | void> {

@@ -3,6 +3,7 @@ import Database from './database.js';
 import DataGeneric from './data-generic.js';
 import { Log } from './log.js';
 import { Signals } from './signals';
+import { ModuleApiBase } from './module-api-base.js';
 
-export { Database, DataGeneric, Log, Signals } ;
+export { Database, DataGeneric, Log, Signals, ModuleApiBase };
 
