@@ -60,36 +60,48 @@ export class ModuleApiBase {
     }
 
     if (req.type === 'response') {
-      let requestID = req.requestID;
-      let cb = this.core.requests.get(requestID);
-      Log.debug('result from core for requestID:', requestID, req.result);
-      if (cb) {
-        cb(req.result);
-        delete this.core.requests[requestID];
-      } else {
-        Log.warning('No callback for the response:', req);
-        Log.warning('requests:', this.core.requests);
-        Log.warning('requestID:', requestID);
-        Log.warning('typeof requestID:', typeof requestID);
-        for (let kv of this.core.requests) {
-          let key = kv[0];
-          Log.warning('key:', key);
-          Log.warning('typeof key:', typeof key);
-          Log.warning('key === requestID:', key === requestID);
-          Log.warning('key == requestID:', key == requestID);
-        }
-        Log.warning('cb:', cb);
-        Log.warning('this.core:', this.core);
-      }
-      return;
+     return this.processResponse(req);
     } else if (req.type === 'request') {
-      return await this.processAPI(ws, req);
+     return await this.processAPI(ws, req);
+    } else if (req.type === 'notify') {
+      this.processNotify(req.data);
     } else {
       Log.warning('Unknown message type:', req);
     }
   }
 
-  async processAPI(ws: any, req: Request): Promise<Response> {
+  private processNotify(data: any) {
+   if (data.event === 'client_disconnect') {
+    let wsGuid = data.data.wsGuid;
+    this.signals.unsubscribe({ wsGuid, params: { event: 'client_disconnect' } });
+   }
+  }
+
+ private processResponse(req: Request) {
+  let requestID = req.requestID;
+  let cb = this.core.requests.get(requestID);
+  //Log.debug('result from core for requestID:', requestID, req.result);
+  if (cb) {
+   cb(req.result);
+   delete this.core.requests[requestID];
+  } else {
+   Log.warning('No callback for the response:', req);
+   Log.warning('requests:', this.core.requests);
+   Log.warning('requestID:', requestID);
+   Log.warning('typeof requestID:', typeof requestID);
+   for (let kv of this.core.requests) {
+    let key = kv[0];
+    Log.warning('key:', key);
+    Log.warning('typeof key:', typeof key);
+    Log.warning('key === requestID:', key === requestID);
+    Log.warning('key == requestID:', key == requestID);
+   }
+   Log.warning('cb:', cb);
+   Log.warning('this.core:', this.core);
+  }
+ }
+
+ async processAPI(ws: any, req: Request): Promise<Response> {
     if (this.core.ws && this.core.ws !== ws) console.info('update APICore ws.');
     this.core.ws = ws;
 

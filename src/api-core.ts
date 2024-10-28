@@ -33,7 +33,7 @@ export class ApiCore {
   }
 
   private send(msg: any): void {
-    Log.info('send to core:', msg);
+    //Log.info('send to core:', msg);
     if (this.ws) {
       this.ws.send(JSON.stringify(msg));
     } else {
