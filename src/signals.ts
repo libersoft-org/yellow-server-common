@@ -41,6 +41,7 @@ export class Signals {
   }
 
   notifyUser(userID: string, event: string, data: any) {
+    Log.debug('Notify user: ' + userID + ', event: ' + event + ', data: ', data);
     for (const [wsGuid, clientData] of this.clients) {
       if (clientData.userID === userID && clientData.subscriptions?.has(event)) {
         const msg = { event, data };
