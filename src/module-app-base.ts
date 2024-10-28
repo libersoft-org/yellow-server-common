@@ -3,12 +3,12 @@ import path from 'path';
 
 
 export class ModuleAppBase {
- constructor(info) {
+ constructor(info, appPath) {
   this.info = {
    appName: 'Yellow Server Module',
    appVersion: '0.01',
    appPath: path.dirname(import.meta.dir) + '/',
-   settingsFile: import.meta.env.VITE_YELLOW_SETTINGS_PATH || path.join(path.dirname(import.meta.dir), 'settings.json'),
+   settingsFile: import.meta.env.VITE_YELLOW_SETTINGS_PATH || path.join(appPath, 'settings.json'),
    ...info
   }
   this.defaultSettings = {
