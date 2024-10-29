@@ -1,8 +1,8 @@
 import { Log } from './log';
 
 export class ApiCore {
-  private ws: WebSocket | undefined;
-  private requests: Map<string, (res: any) => void>;
+  public ws: WebSocket | undefined;
+  public requests: Map<string, (res: any) => void>;
   public api: any;
 
   constructor() {
@@ -32,7 +32,7 @@ export class ApiCore {
     return await promise;
   }
 
-  private send(msg: any): void {
+  public send(msg: any): void {
     //Log.info('send to core:', msg);
     if (this.ws) {
       this.ws.send(JSON.stringify(msg));

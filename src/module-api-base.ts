@@ -1,7 +1,7 @@
-import { Log } from './log';
+import { Log } from './log.js';
 import { Signals } from './signals';
 import { ApiCore } from './api-core';
-import { Mutex } from 'async-mutex';
+
 
 interface Command {
   method: (context: any) => Promise<any>;
@@ -18,6 +18,7 @@ interface Request {
     command?: string;
     params?: any;
   };
+  result?: any;
 }
 
 interface Response {
@@ -56,7 +57,7 @@ export class ModuleApiBase {
     try {
       req = JSON.parse(json);
     } catch (ex) {
-      return { error: 902, message: 'Invalid JSON command' };
+      return { error: 902, message: 'Invalid JSON command', type: 'response', requestID: req.requestID, wsGuid: req.wsGuid };
     }
 
     if (req.type === 'response') {
@@ -67,6 +68,7 @@ export class ModuleApiBase {
       this.processNotify(req.data);
     } else {
       Log.warning('Unknown message type:', req);
+      return { error: 901, message: 'Unknown message type', type: 'response', requestID: req.requestID, wsGuid: req.wsGuid  };
     }
   }
 
