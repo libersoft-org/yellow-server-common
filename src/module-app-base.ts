@@ -3,6 +3,9 @@ import path from 'path';
 
 
 export class ModuleAppBase {
+
+ public info: any;
+
  constructor(info, appPath) {
   this.info = {
    appName: 'Yellow Server Module',
@@ -11,6 +14,7 @@ export class ModuleAppBase {
    settingsFile: import.meta.env.VITE_YELLOW_SETTINGS_PATH || path.join(appPath, 'settings.json'),
    ...info
   }
+  console.log('this.info', this.info);
   this.defaultSettings = {
     web: {
      http_port: 25001,
@@ -116,6 +120,7 @@ export class ModuleAppBase {
  }
 
  async loadSettings() {
+  Log.debug('Loading settings from file: ' + this.info.settingsFile);
   const file = Bun.file(this.info.settingsFile);
   if (await file.exists()) {
    try {

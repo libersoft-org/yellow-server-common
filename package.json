@@ -2,7 +2,7 @@
   "name": "yellow-server-common",
   "version": "1.0.0",
   "description": "common",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
