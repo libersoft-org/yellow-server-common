@@ -76,6 +76,7 @@ export class ModuleApiBase {
    if (data.event === 'client_disconnect') {
     let wsGuid = data.data.wsGuid;
     this.signals.unsubscribe({ wsGuid, params: { event: 'client_disconnect' } });
+    this.clients.delete(wsGuid);
    }
   }
 
