@@ -60,15 +60,34 @@ export class ModuleApiBase {
       return { error: 902, message: 'Invalid JSON command', type: 'response', requestID: req.requestID, wsGuid: req.wsGuid };
     }
 
-    if (req.type === 'response') {
-     return this.processResponse(req);
-    } else if (req.type === 'request') {
-     return await this.processAPI(ws, req);
-    } else if (req.type === 'notify') {
+    try {
+     if (req.type === 'response') {
+      return this.processResponse(req);
+     } else if (req.type === 'request') {
+      return await this.processAPI(ws, req);
+     } else if (req.type === 'notify') {
       this.processNotify(req.data);
-    } else {
+     } else {
       Log.warning('Unknown message type:', req);
-      return { error: 901, message: 'Unknown message type', type: 'response', requestID: req.requestID, wsGuid: req.wsGuid  };
+      return {
+       error: 901,
+       message: 'Unknown message type',
+       type: 'response',
+       requestID: req.requestID,
+       wsGuid: req.wsGuid
+      };
+     }
+    }
+    catch (ex) {
+      Log.error('processWsMessage error:', ex);
+      //throw;
+      return {
+       error: 999,
+       message: 'Internal module error',
+       type: 'response',
+       requestID: req.requestID,
+       wsGuid: req.wsGuid
+      };
     }
   }
 

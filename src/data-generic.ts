@@ -7,6 +7,8 @@ interface Settings {
 class DataGeneric {
   db: Database;
 
+  /* todo: reconnects */
+
   constructor(settings: Settings) {
     this.db = new Database(settings);
   }
