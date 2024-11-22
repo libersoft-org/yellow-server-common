@@ -30,27 +30,46 @@ class Database {
       metaAsArray: false,
       trace: import.meta.env.VITE_YELLOW_DEBUG,
     };
-    this.conn = null;
+    this.pool = null;
   }
 
   async connect(): Promise<void> {
-    this.conn = await mariaDB.createConnection(this.connectionConfig);
-    Log.info('Connected to the database');
+    this.pool = await mariaDB.createPool({
+     initializationTimeout: 0,
+     connectionLimit: 5,
+     acquireTimeout: 15000,
+     ...this.connectionConfig,
+   });
+
+    let conn = await this.pool.getConnection();
+    Log.info('connected to database. connection id:', conn.threadId);
+    conn.release();
   }
 
   async disconnect(): Promise<void> {
-    if (this.conn) {
-      await this.conn.end();
-      this.conn = null;
+    if (this.pool) {
+      await this.pool.end();
+      this.pool = null;
       Log.info('Disconnected from the database');
     }
   }
 
   async execute<T>(callback: (conn: mariaDB.Connection) => Promise<T>): Promise<T> {
-    if (!this.conn) {
+    if (!this.pool) {
       await this.connect();
     }
-    const result = await callback(this.conn);
+    let c = await this.pool.getConnection();
+    let result;
+    try {
+     result = await callback(c);
+    }
+    catch (err) {
+      Log.error('Error executing database command:', err);
+      throw err;
+    }
+    finally {
+     c.end();
+    }
     return result;
   }
 
