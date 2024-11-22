@@ -1,4 +1,4 @@
-import mariaDB from 'mariadb';
+import mariaDB, {ConnectionConfig} from 'mariadb';
 import Log from './log.js';
 
 interface DatabaseSettings {
@@ -28,6 +28,7 @@ class Database {
       database: this.settings.name,
       bigIntAsNumber: true,
       metaAsArray: false,
+      trace: import.meta.env.VITE_YELLOW_DEBUG,
     };
     this.conn = null;
   }
