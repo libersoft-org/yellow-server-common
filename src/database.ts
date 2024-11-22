@@ -12,13 +12,14 @@ interface DatabaseSettings {
 class Database {
   settings: DatabaseSettings;
   connectionConfig: mariaDB.ConnectionConfig;
-  conn: mariaDB.Connection | null;
+  connections: object;
 
   constructor(settings: DatabaseSettings) {
     if (!settings) {
       throw new Error('Database settings are missing');
     }
     this.settings = settings;
+    this.connections = {};
 
     this.connectionConfig = {
       host: this.settings.host,
@@ -37,9 +38,34 @@ class Database {
     this.pool = await mariaDB.createPool({
      initializationTimeout: 0,
      connectionLimit: 5,
-     acquireTimeout: 15000,
+     acquireTimeout: 5000,
+     debug: import.meta.env.VITE_YELLOW_DB_DEBUG,
      ...this.connectionConfig,
    });
+
+    this.pool.on('acquire', conn => {
+      Log.info('Connection %d acquired', conn.threadId);
+    });
+    this.pool.on('connection', conn => {
+      Log.info('? connection %d', conn.threadId);
+      if (!this.connections[conn.threadId]) {
+        Log.info('..New connection %d', conn.threadId);
+        this.connections[conn.threadId] = true;
+        void 'https://github.com/mariadb-corporation/mariadb-connector-nodejs/issues/195';
+        conn.on('error', (err) => {
+          Log.error('database connection error:', err);
+        });
+      }
+    });
+    this.pool.on('enqueue', () => {
+      Log.info('Waiting for available connection slot');
+    });
+    this.pool.on('release', conn => {
+      Log.info('Connection %d released', conn.threadId);
+    });
+    this.pool.on('error', err => {
+     Log.error('Pool error:', err);
+    });
 
     let conn = await this.pool.getConnection();
     Log.info('connected to database. connection id:', conn.threadId);
@@ -59,6 +85,11 @@ class Database {
       await this.connect();
     }
     let c = await this.pool.getConnection();
+
+    if (!this.connections[c.threadId]) {
+     throw new Error('Connection not found');
+    }
+
     let result;
     try {
      result = await callback(c);
@@ -68,7 +99,8 @@ class Database {
       throw err;
     }
     finally {
-     c.end();
+     await c.end();
+     await c.release();
     }
     return result;
   }
