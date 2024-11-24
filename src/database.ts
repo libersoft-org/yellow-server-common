@@ -31,8 +31,9 @@ class Database {
       metaAsArray: false,
       trace: import.meta.env.VITE_YELLOW_DEBUG,
       debug: import.meta.env.VITE_YELLOW_DB_DEBUG,
-      initializationTimeout: 0,
+      initializationTimeout: 1000,
       leakDetectionTimeout: 10000,
+      connectionLimit: 10,
     };
     this.pool = null;
   }
@@ -42,10 +43,12 @@ class Database {
 The createPoolCluster(options) → PoolCluster function does not return a Promise, and therefore must be wrapped in a new Promise object if its return value is returned directly from an async function.
  */
 
-    this.pool = await mariaDB.createPoolCluster({});
+    this.pool = await mariaDB.createPoolCluster({restoreNodeTimeout: 1000, removeNodeErrorCount: -1});
     this.pool.add("server1", this.connectionConfig);
+    this.pool.add("server2", this.connectionConfig);
+    this.pool.add("server3", this.connectionConfig);
 
-    /*this.pool.on('acquire', conn => {
+    this.pool.on('acquire', conn => {
       Log.info('Connection %d acquired', conn.threadId);
     });
     this.pool.on('connection', conn => {
@@ -67,7 +70,7 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
     });
     this.pool.on('error', err => {
      Log.error('Pool error:', err);
-    });*/
+    });
 
     let conn = await this.pool.getConnection();
     Log.info('connected to database. connection id:', conn.threadId);
@@ -86,7 +89,10 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
     if (!this.pool) {
       await this.connect();
     }
+
+    Log.debug('pool.getConnection()...');
     let c = await this.pool.getConnection();
+    Log.debug('pool.getConnection()...done');
 
     /*if (!this.connections[c.threadId]) {
      throw new Error('Connection not found');
