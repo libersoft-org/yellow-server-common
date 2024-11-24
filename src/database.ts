@@ -33,7 +33,7 @@ class Database {
       debug: import.meta.env.VITE_YELLOW_DB_DEBUG,
       initializationTimeout: 1000,
       leakDetectionTimeout: 10000,
-      connectionLimit: 1,
+      connectionLimit: 10,
     };
     this.cluster = null;
   }
