@@ -33,9 +33,9 @@ class Database {
       debug: import.meta.env.VITE_YELLOW_DB_DEBUG,
       initializationTimeout: 1000,
       leakDetectionTimeout: 10000,
-      connectionLimit: 5,
+      connectionLimit: 1,
     };
-    this.pool = null;
+    this.cluster = null;
   }
 
   async connect(): Promise<void> {
@@ -43,15 +43,15 @@ class Database {
 The createPoolCluster(options) → PoolCluster function does not return a Promise, and therefore must be wrapped in a new Promise object if its return value is returned directly from an async function.
  */
 
-    this.pool = await mariaDB.createPoolCluster({restoreNodeTimeout: 1000, removeNodeErrorCount: 999999999});
-    this.pool.add("server1", this.connectionConfig);
-    this.pool.add("server2", this.connectionConfig);
-    //this.pool.add("server3", this.connectionConfig);
+    this.cluster = await mariaDB.createPoolCluster({restoreNodeTimeout: 1000, removeNodeErrorCount: 999999999});
+    this.cluster.add("server1", this.connectionConfig);
+    //this.cluster.add("server2", this.connectionConfig);
+    //this.cluster.add("server3", this.connectionConfig);
 
-    /*this.pool.on('acquire', conn => {
+    /*this.cluster.on('acquire', conn => {
       Log.info('Connection %d acquired', conn.threadId);
     });
-    this.pool.on('connection', conn => {
+    this.cluster.on('connection', conn => {
       Log.info('? connection %d', conn.threadId);
       if (!this.connections[conn.threadId]) {
         Log.info('..New connection %d', conn.threadId);
@@ -62,36 +62,36 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
         });
       }
     });
-    this.pool.on('enqueue', () => {
+    this.cluster.on('enqueue', () => {
       Log.info('Waiting for available connection slot');
     });
-    this.pool.on('release', conn => {
+    this.cluster.on('release', conn => {
       Log.info('Connection %d released', conn.threadId);
     });
-    this.pool.on('error', err => {
+    this.cluster.on('error', err => {
      Log.error('Pool error:', err);
     });*/
 
-    let conn = await this.pool.getConnection();
+    let conn = await this.cluster.getConnection();
     Log.info('connected to database. connection id:', conn.threadId);
     conn.release();
   }
 
   async disconnect(): Promise<void> {
-    if (this.pool) {
-      await this.pool.end();
-      this.pool = null;
+    if (this.cluster) {
+      await this.cluster.end();
+      this.cluster = null;
       Log.info('Disconnected from the database');
     }
   }
 
   async execute<T>(callback: (conn: mariaDB.Connection) => Promise<T>): Promise<T> {
-    if (!this.pool) {
+    if (!this.cluster) {
       await this.connect();
     }
 
     Log.debug('pool.getConnection()...');
-    let c = await this.pool.getConnection();
+    let c = await this.cluster.getConnection();
     Log.debug('pool.getConnection()...done');
 
     /*if (!this.connections[c.threadId]) {
@@ -103,15 +103,15 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
      try {
       result = await callback(c);
      } finally {
-      Log.debug('commit & release ', c);
+      Log.debug('commit & release ', c.threadId);
       await c.commit();
       await c.release();
-      Log.debug('done commit & release ', c);
-
-         console.log("Total connections: ", pool.totalConnections());
-         console.log("Active connections: ", pool.activeConnections());
-         console.log("Idle connections: ", pool.idleConnections());
-
+      Log.debug('done commit & release ', c.threadId);
+/*
+         console.log("Total connections: ", this.pools[0].totalConnections());
+         console.log("Active connections: ", this.pools[0].activeConnections());
+         console.log("Idle connections: ", this.pools[0].idleConnections());
+*/
      }
     }
     catch (err) {
