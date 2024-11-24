@@ -48,7 +48,7 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
     this.pool.add("server2", this.connectionConfig);
     //this.pool.add("server3", this.connectionConfig);
 
-    this.pool.on('acquire', conn => {
+    /*this.pool.on('acquire', conn => {
       Log.info('Connection %d acquired', conn.threadId);
     });
     this.pool.on('connection', conn => {
@@ -70,7 +70,7 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
     });
     this.pool.on('error', err => {
      Log.error('Pool error:', err);
-    });
+    });*/
 
     let conn = await this.pool.getConnection();
     Log.info('connected to database. connection id:', conn.threadId);
@@ -103,8 +103,15 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
      try {
       result = await callback(c);
      } finally {
-      await c.end();
+      Log.debug('commit & release ', c);
+      await c.commit();
       await c.release();
+      Log.debug('done commit & release ', c);
+
+         console.log("Total connections: ", pool.totalConnections());
+         console.log("Active connections: ", pool.activeConnections());
+         console.log("Idle connections: ", pool.idleConnections());
+
      }
     }
     catch (err) {
