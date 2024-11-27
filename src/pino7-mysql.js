@@ -1,57 +1,46 @@
 import build from 'pino-abstract-transport'
 import SonicBoom from 'sonic-boom'
-import { once } from 'events'
-
-
+import {once} from 'events'
 var mysql = require('mysql');
-
-
 
 
 export default async function (opts) {
 
-   var con = mysql.createConnection({
-     "host": "127.0.0.1",
-     "port": 3306,
-     "user": "username",
-     "password": "password",
-     "name": "yellow"
+    var con = mysql.createConnection({...opts, database: opts.name});
+
+    con.connect(function (err) {
+        if (err) throw err;
+        console.log("Connected!");
     });
 
-  con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
+    const destination = new SonicBoom({dest: 'boom', sync: false})
+    await once(destination, 'ready')
 
+    return build(
+        async function (source) {
+            for await (let obj of source) {
 
-  const destination = new SonicBoom({ dest: 'boom', sync: false })
-  await once(destination, 'ready')
+                ///console.log('ooobj', obj);
 
-  return build(
-   async function (source) {
-       for await (let obj of source) {
+                /*if (obj.logging_reconf) {
+                 db = new DataGeneric(logging_reconf);
+                }*/
 
-         console.log('obj', obj);
+                //await db?.db.query('INSERT INTO logs4(log) VALUES(?)', [obj]);
+                con.query('INSERT INTO logs4(log) VALUES(?)', [JSON.stringify(obj)]);
 
-         /*if (obj.logging_reconf) {
-          db = new DataGeneric(logging_reconf);
-         }*/
-
-         //await db?.db.query('INSERT INTO logs4(log) VALUES(?)', [obj]);
-         con.query('INSERT INTO logs4(log) VALUES(?)', [obj]);
-
-         const toDrain = !destination.write(obj.msg.toUpperCase() + '\n')
-         // This block will handle backpressure
-         if (toDrain) {
-           await once(destination, 'drain')
-         }
-       }*/
-    },
-   {
-    async close (err) {
-      destination.end()
-      await once(destination, 'close')
-      //await db?.close();
-    }
-  })
+                const toDrain = !destination.write(obj.msg.toUpperCase() + '\n')
+                // This block will handle backpressure
+                if (toDrain) {
+                    await once(destination, 'drain')
+                }
+            }
+        },
+        {
+            async close(err) {
+                destination.end()
+                await once(destination, 'close')
+                //await db?.close();
+            }
+        })
 }
