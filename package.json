@@ -10,7 +10,9 @@
   "dependencies": {
     "async-mutex": "^0.5.0",
     "mariadb": "2",
+    "mysql": "^2.18.1",
     "pino": "8",
-    "pino-pretty": "^13.0.0"
+    "pino-pretty": "^13.0.0",
+    "sql-client": "^3.0.0"
   }
 }
