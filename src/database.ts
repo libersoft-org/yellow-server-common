@@ -90,9 +90,9 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
       await this.connect();
     }
 
-    Log.debug('pool.getConnection()...');
+    //Log.debug('pool.getConnection()...');
     let c = await this.cluster.getConnection();
-    Log.debug('pool.getConnection()...done');
+    //Log.debug('pool.getConnection()...done');
 
     /*if (!this.connections[c.threadId]) {
      throw new Error('Connection not found');
@@ -103,10 +103,10 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
      try {
       result = await callback(c);
      } finally {
-      Log.debug('commit & release ', c.threadId);
+      //Log.debug('commit & release ', c.threadId);
       await c.commit();
       await c.release();
-      Log.debug('done commit & release ', c.threadId);
+      //Log.debug('done commit & release ', c.threadId);
 /*
          console.log("Total connections: ", this.pools[0].totalConnections());
          console.log("Active connections: ", this.pools[0].activeConnections());
