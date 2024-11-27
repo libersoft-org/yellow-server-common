@@ -1,7 +1,6 @@
 import Database from './database.js';
 
 interface Settings {
-  // Define the shape of the settings object if known
 }
 
 class DataGeneric {

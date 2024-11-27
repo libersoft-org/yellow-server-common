@@ -9,11 +9,11 @@ const logdir = process.env.LOGDIR || '/tmp/'
 const createSonicBoom = (dest) =>
  pino.destination({dest: dest, append: true, sync: true})
 
-/*
-let tr = pino.transport({
+
+/*let tr = pino.transport({
   target: '/home/koom/repos/koo5/yellow-dev/0/yellow-dev/yellow-server-common/src/pino7-mysql.js',
- })
-*/
+})*/
+
 
 let globalPino = pino({level: 'debug'}, pino.multistream({
  stream: pretty({
@@ -40,10 +40,10 @@ export function reconfigureLogging(config) {
   {level: 'error', stream: createSonicBoom(`${logdir}/error.log`)},
   {level: 'debug', stream: createSonicBoom(`${logdir}/debug.log`)},
   {level: 'fatal', stream: createSonicBoom(`${logdir}/fatal.log`)},
-pino.transport({
-    target: './pino7-mysql.js',
-    options: config.database
-   })
+  pino.transport({
+      target: './pino7-mysql.js',
+      options: config.database
+     })
  ];
 /*
  if (config && config.database) {
@@ -58,11 +58,11 @@ pino.transport({
   //streams.push(tr)
  }
 */
- /*globalPino = pino({level: 'debug'}, pino.multistream(streams));
+ globalPino = pino({level: 'debug'}, pino.multistream(streams));
 
  for (const logger of loggers) {
   logger.reconfigure();
- }*/
+ }
 }
 
 
