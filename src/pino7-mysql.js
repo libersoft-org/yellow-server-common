@@ -8,6 +8,8 @@ import {DataGeneric} from 'yellow-server-common';
 
 export default async function (opts) {
 
+  console.log('initializing mysql logging transport', opts);
+
   const db = new DataGeneric(opts);
 
   // SonicBoom is necessary to avoid loops with the main thread.

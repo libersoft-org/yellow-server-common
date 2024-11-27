@@ -16,6 +16,7 @@ let streams;
 export function newLogger(topic) {
 
  const log = pino({ level: 'debug' }, pino.multistream(streams))
+ console.log('newLogger', topic)
  return log
 
 }
@@ -53,7 +54,25 @@ export function testLogging() {
  log.info('Info')
  console.log('After-Info')
 
+ log.debug('Debug')
+
+ log.info({merging:'object'}, 'interpolation string %o', [123]);
+ log.info({merging:{a:'object'}}, 'interpolation string %o', [123]);
+
+ log.info('test123, 456, 789')
+ log.info('test123 %o %o, 456, 789', 'abc', 'def') //   msg: "test123 'abc' 'def', 456, 789",
+
+ const log2 = newLogger('app2');
+ log2.info('app start');
+
+
 }
+
+
+export function newLog(name) {
+ return newLogger(name)
+}
+
 
 
 export default newLogger;
