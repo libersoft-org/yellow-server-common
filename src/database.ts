@@ -88,13 +88,13 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
   }
 
   async execute<T>(callback: (conn: mariaDB.Connection) => Promise<T>): Promise<T> {
-    console.log('execute');
+    //console.log('execute');
     if (!this.cluster) {
       console.log('execute connect');
       await this.connect();
     }
 
-    console.log('execute getConnection');
+    //console.log('execute getConnection');
 
     //Log.debug('pool.getConnection()...');
     let c = await this.cluster.getConnection();

@@ -40,24 +40,17 @@ export function reconfigureLogging(config) {
   {level: 'error', stream: createSonicBoom(`${logdir}/error.log`)},
   {level: 'debug', stream: createSonicBoom(`${logdir}/debug.log`)},
   {level: 'fatal', stream: createSonicBoom(`${logdir}/fatal.log`)},
-  pino.transport({
-      target: './pino7-mysql.js',
-      options: config.database
-     })
  ];
-/*
+
  if (config && config.database) {
   console.log('config.database', config.database)
-
-
   let tr = pino.transport({
     target: './pino7-mysql.js',
     options: config.database
-   })
-
-  //streams.push(tr)
+  })
+  streams.push(tr)
  }
-*/
+
  globalPino = pino({level: 'debug'}, pino.multistream(streams));
 
  for (const logger of loggers) {
