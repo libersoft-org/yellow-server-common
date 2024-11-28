@@ -26,33 +26,62 @@ let loggers: any = [];
 
 
 
-export function reconfigureLogging(config) {
+export function reconfigureLogging(app_config) {
 
- let streams = [
-  {stream: createSonicBoom(`${logdir}/info.log`)},
-  {
-   stream: pretty({
-    colorize: true,
-    sync: true,
-   })
-  },
-  {level: 'error', stream: createSonicBoom(`${logdir}/error.log`)},
-  {level: 'debug', stream: createSonicBoom(`${logdir}/debug.log`)},
-  {level: 'fatal', stream: createSonicBoom(`${logdir}/fatal.log`)},
- ];
+ let config = app_config?.log;
 
- if (config && config?.log?.database?.enabled)
+ if (!config) {
+  console.log('No logging configured.');
+  return;
+ }
+
+ let streams = [];
+ let conf;
+
+ conf = config.stdout;
+ if (conf?.enabled) {
+  streams.push(pino.transport({
+    target: './pino7-pretty',
+    options: {
+      //sync: true,
+      colorize: true
+    }
+  }))
+ }
+
+ conf = config.file;
+ if (conf?.enabled) {
+  console.log('log.file', conf)
+  checkValidLevel(conf.level);
+  streams.push({level: conf.level, stream: createSonicBoom(conf.name)});
+ }
+
+ conf = config.database;
+ if (conf?.enabled)
  {
-
-  console.log('config.database', config.database)
+  console.log('log.database', conf)
   let tr = pino.transport({
     target: './pino7-mysql.js',
-    options: config.database
+    options: conf.database || app_config.database
   })
   streams.push(tr)
  }
 
- globalPino = pino({level: 'debug'}, pino.multistream(streams));
+ conf = config.elasticsearch;
+ if (conf?.enabled) {
+  console.log('log.elasticsearch', conf)
+  let tr = pino.transport({
+   target: 'pino-elasticsearch',
+   options: {
+    index: 'an-index',
+    node: 'http://localhost:9200',
+    esVersion: 7,
+    flushBytes: 1000
+   }
+  });
+ }
+
+ globalPino = pino({level: config.level || 'debug'}, pino.multistream(streams));
 
  for (const logger of loggers) {
   logger.reconfigure();
@@ -60,19 +89,40 @@ export function reconfigureLogging(config) {
 }
 
 
+ function checkValidLevel(level) {
+  if (!validLevel(level))
+   throw('Unknown log level: ' + level);
+ }
+
+ function validLevel(level) {
+  return pino().levels.labels?.[level] || Number(level);
+ }
+
 export class Logger {
 
  name: string;
  myPino: any;
+ parent: any;
+ opts: any;
 
- constructor(name) {
+ constructor(name, parent=null, opts=null) {
   this.name = name;
   loggers.push(this);
+  this.parent = parent;
+  this.opts = opts;
   this.reconfigure();
  }
 
+ child(opts) {
+  console.log('make child logger', opts);
+  return new Logger('-', this, opts);
+ }
+
  reconfigure() {
-  this.myPino = globalPino.child({name: this.name});
+  if (this.opts)
+   this.myPino = this.parent.myPino.child(this.opts);
+  else
+   this.myPino = globalPino.child({name: this.name});
  }
 
  debug(...args: any[]): void {
