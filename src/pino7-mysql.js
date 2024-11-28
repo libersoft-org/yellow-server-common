@@ -1,7 +1,7 @@
 import build from 'pino-abstract-transport'
-import SonicBoom from 'sonic-boom'
 import {once} from 'events'
 var mysql = require('mysql');
+import SonicBoom from 'sonic-boom'
 
 
 export default async function (opts) {
@@ -13,14 +13,14 @@ export default async function (opts) {
         console.log("Connected!");
     });
 
-    const destination = new SonicBoom({dest: 'boom', sync: false})
+    const destination = new SonicBoom({dest: '/tmp/pino7-mysql-transport-debug.log', sync: false})
     await once(destination, 'ready')
 
     return build(
         async function (source) {
             for await (let obj of source) {
 
-                ///console.log('ooobj', obj);
+                //console.log('ooobj', obj);
 
                 /*if (obj.logging_reconf) {
                  db = new DataGeneric(logging_reconf);

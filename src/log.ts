@@ -27,7 +27,6 @@ let loggers: any = [];
 
 
 export function reconfigureLogging(config) {
- /* takes either null or the relevant settings.json section */
 
  let streams = [
   {stream: createSonicBoom(`${logdir}/info.log`)},
@@ -42,7 +41,9 @@ export function reconfigureLogging(config) {
   {level: 'fatal', stream: createSonicBoom(`${logdir}/fatal.log`)},
  ];
 
- if (config && config.database) {
+ if (config && config?.log?.database?.enabled)
+ {
+
   console.log('config.database', config.database)
   let tr = pino.transport({
     target: './pino7-mysql.js',
