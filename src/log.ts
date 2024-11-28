@@ -43,7 +43,7 @@ export function reconfigureLogging(app_config) {
   streams.push(pino.transport({
     target: './pino7-pretty',
     options: {
-      //sync: true,
+      minimumLevel: conf.level,
       colorize: true
     }
   }))
