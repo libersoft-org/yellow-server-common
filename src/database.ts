@@ -46,9 +46,9 @@ class Database {
 The createPoolCluster(options) → PoolCluster function does not return a Promise, and therefore must be wrapped in a new Promise object if its return value is returned directly from an async function.
  */
 
-    console.log('connect createPoolCluster');
+    Log.trace('connect createPoolCluster');
     this.cluster = await mariaDB.createPoolCluster({restoreNodeTimeout: 1000, removeNodeErrorCount: 999999999});
-    console.log('connect add');
+    Log.trace('connect add');
     this.cluster.add("server1", this.connectionConfig);
     //this.cluster.add("server2", this.connectionConfig);
     //this.cluster.add("server3", this.connectionConfig);
@@ -76,7 +76,7 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
     this.cluster.on('error', err => {
      Log.error('Pool error:', err);
     });*/
-    console.log('await this.cluster.getConnection()');
+    Log.trace('await this.cluster.getConnection()');
     let conn = await this.cluster.getConnection();
     Log.info('connected to database. connection id:', conn.threadId);
     conn.release();
@@ -91,13 +91,13 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
   }
 
   async execute<T>(callback: (conn: mariaDB.Connection) => Promise<T>): Promise<T> {
-    //console.log('execute');
+    //Log.trace('execute');
     if (!this.cluster) {
-      console.log('execute connect');
+      Log.trace('execute connect');
       await this.connect();
     }
 
-    //console.log('execute getConnection');
+    //Log.trace('execute getConnection');
 
     //Log.debug('pool.getConnection()...');
     let c = await this.cluster.getConnection();
@@ -117,9 +117,9 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
       await c.release();
       //Log.debug('done commit & release ', c.threadId);
 /*
-         console.log("Total connections: ", this.pools[0].totalConnections());
-         console.log("Active connections: ", this.pools[0].activeConnections());
-         console.log("Idle connections: ", this.pools[0].idleConnections());
+         Log.trace("Total connections: ", this.pools[0].totalConnections());
+         Log.trace("Active connections: ", this.pools[0].activeConnections());
+         Log.trace("Idle connections: ", this.pools[0].idleConnections());
 */
      }
     }
@@ -138,9 +138,9 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
   }
 
   async databaseExists(): Promise<boolean> {
-    console.log('databaseExists');
+    Log.trace('databaseExists');
     return await this.execute(async conn => {
-      console.log('databaseExists execute');
+      Log.trace('databaseExists execute');
       const rows = await conn.query('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?', [this.settings.name]);
       return rows.length > 0;
     });

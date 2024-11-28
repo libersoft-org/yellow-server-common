@@ -95,7 +95,7 @@ export function reconfigureLogging(app_config) {
  }
 
  function validLevel(level) {
-  return pino().levels.labels?.[level] || Number(level);
+  return pino().levels.values?.[level] || Number(level);
  }
 
 export class Logger {
@@ -125,28 +125,60 @@ export class Logger {
    this.myPino = globalPino.child({name: this.name});
  }
 
+ trace(...args: any[]): void {
+  let corr = {};
+  if (typeof args[0] !== 'string') {
+   corr = args.shift();
+  }
+  this.myPino.trace(corr, this.format(args));
+ }
+
  debug(...args: any[]): void {
-  this.myPino.debug(this.format(args));
+  let corr = {};
+  if (typeof args[0] !== 'string') {
+   corr = args.shift();
+  }
+  this.myPino.debug(corr, this.format(args));
  }
 
  info(...args: any[]): void {
-  this.myPino.info(this.format(args));
+  let corr = {};
+  if (typeof args[0] !== 'string') {
+   corr = args.shift();
+  }
+  this.myPino.info(corr, this.format(args));
  }
 
  warn(...args: any[]): void {
-  this.myPino.warn(this.format(args));
+  let corr = {};
+  if (typeof args[0] !== 'string') {
+   corr = args.shift();
+  }
+  this.myPino.warn(corr, this.format(args));
  }
 
  warning(...args: any[]): void {
-  this.myPino.warn(this.format(args));
+  let corr = {};
+  if (typeof args[0] !== 'string') {
+   corr = args.shift();
+  }
+  this.myPino.warn(corr, this.format(args));
  }
 
  error(...args: any[]): void {
-  this.myPino.error(this.format(args));
+  let corr = {};
+  if (typeof args[0] !== 'string') {
+   corr = args.shift();
+  }
+  this.myPino.error(corr, this.format(args));
  }
 
  fatal(...args: any[]): void {
-  this.myPino.fatal(this.format(args));
+  let corr = {};
+  if (typeof args[0] !== 'string') {
+   corr = args.shift();
+  }
+  this.myPino.fatal(corr, this.format(args));
  }
 
  format(args: any[]): string {

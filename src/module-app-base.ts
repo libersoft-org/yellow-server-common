@@ -108,7 +108,7 @@ export class ModuleAppBase {
    },
    drain: ws => {
     // the socket is ready to receive more data
-    console.log('DRAIN', ws);
+    //console.log('DRAIN', ws);
    }
   };
  }

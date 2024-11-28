@@ -28,6 +28,9 @@ export default async function (opts) {
 
                 //await db?.db.query('INSERT INTO logs4(log) VALUES(?)', [obj]);
                 con.query('INSERT INTO logs(json) VALUES(?)', [JSON.stringify(obj)]);
+                // level, message, params
+
+
 
                 const toDrain = !destination.write(obj.msg.toUpperCase() + '\n')
                 // This block will handle backpressure
