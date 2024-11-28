@@ -1,4 +1,6 @@
-import { Log } from './log';
+import { newLogger } from './log';
+
+const Log = newLogger('signals');
 
 export class Signals {
   allowedEvents: string[];

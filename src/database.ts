@@ -1,5 +1,8 @@
 import mariaDB, {ConnectionConfig} from 'mariadb';
-import Log from './log.js';
+import { newLogger } from './log';
+
+const Log = newLogger('database');
+
 
 interface DatabaseSettings {
   host: string;

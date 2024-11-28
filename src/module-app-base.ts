@@ -1,5 +1,7 @@
-import { Log } from './log';
 import path from 'path';
+import { newLogger } from './log';
+
+const Log = newLogger('module-app-base');
 
 
 export class ModuleAppBase {

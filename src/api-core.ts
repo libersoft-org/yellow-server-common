@@ -1,4 +1,6 @@
-import { Log } from './log';
+import { newLogger } from './log';
+
+const Log = newLogger('api-core');
 
 export class ApiCore {
   public ws: WebSocket | undefined;

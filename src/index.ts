@@ -1,6 +1,5 @@
 import Database from './database.ts';
 import DataGeneric from './data-generic.ts';
-import { Log } from './log.js';
 import { Log, newLogger, testLogging, reconfigureLogging} from './log';
 import { Signals } from './signals';
 import { ModuleApiBase } from './module-api-base.js';

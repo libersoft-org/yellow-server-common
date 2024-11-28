@@ -1,6 +1,8 @@
-import { Log } from './log.js';
 import { Signals } from './signals';
 import { ApiCore } from './api-core';
+import { newLogger } from './log';
+
+const Log = newLogger('module-api-base');
 
 
 interface Command {
