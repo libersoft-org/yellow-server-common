@@ -10,10 +10,6 @@ const createSonicBoom = (dest) =>
  pino.destination({dest: dest, append: true, sync: true})
 
 
-/*let tr = pino.transport({
-  target: '/home/koom/repos/koo5/yellow-dev/0/yellow-dev/yellow-server-common/src/pino7-mysql.js',
-})*/
-
 
 let globalPino = pino({level: 'debug'}, pino.multistream({
  stream: pretty({
