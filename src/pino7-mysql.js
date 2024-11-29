@@ -8,31 +8,45 @@ export default async function (opts) {
 
     var con = mysql.createConnection({...opts, database: opts.name});
 
-    con.connect(function (err) {
-        if (err) throw err;
-        console.log("pino7-mysql connected to database.");
-    });
+    let p = new Promise((resolve, reject) => {
+     con.connect(function (err) {
+         if (err) reject();
+         console.log("pino7-mysql connected to database.");
+         resolve();
+     })});
 
     const destination = new SonicBoom({dest: '/tmp/pino7-mysql-transport-debug.log', sync: false})
     await once(destination, 'ready')
+    await p;
 
     return build(
         async function (source) {
             for await (let obj of source) {
 
-                //console.log('ooobj', obj);
+                console.log('ooobj', obj);
 
-                /*if (obj.logging_reconf) {
-                 db = new DataGeneric(logging_reconf);
-                }*/
+                /*con.query(
+                 'INSERT INTO logs(level, message, json, created) VALUES(?,?,?,?)',
+                 [
+                  obj.level,
+                  JSON.stringify(obj.msg),
+                  JSON.stringify(obj),
+                  new Date(1000*obj.time)
+                 ],
+                 function (err, result) {});
 
-                //await db?.db.query('INSERT INTO logs4(log) VALUES(?)', [obj]);
-                con.query('INSERT INTO logs(json) VALUES(?)', [JSON.stringify(obj)]);
-                // level, message, params
+                 */
 
-
+                con.query(
+                 'INSERT INTO logs(json, level) VALUES(?, ?)',
+                 [
+                  JSON.stringify(obj),
+                  1
+                 ],
+                 function (err, result) {});
 
                 const toDrain = !destination.write(obj.msg.toUpperCase() + '\n')
+
                 // This block will handle backpressure
                 if (toDrain) {
                     await once(destination, 'drain')
