@@ -10,7 +10,7 @@ export default async function (opts) {
 
     con.connect(function (err) {
         if (err) throw err;
-        console.log("Connected!");
+        console.log("pino7-mysql connected to database.");
     });
 
     const destination = new SonicBoom({dest: '/tmp/pino7-mysql-transport-debug.log', sync: false})

@@ -18,7 +18,8 @@ const createSonicBoom = (dest) =>
 let globalPino = pino({level: 'debug'}, pino.multistream({
  stream: pretty({
   colorize: true,
-  sync: true,
+  //sync: true,
+  hideObject: true
  })
 }));
 
@@ -114,7 +115,7 @@ export class Logger {
  }
 
  child(opts) {
-  console.log('make child logger', opts);
+  //console.log('make child logger', opts);
   return new Logger('-', this, opts);
  }
 
