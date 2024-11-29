@@ -25,23 +25,13 @@ export default async function (opts) {
 
                 console.log('ooobj', obj);
 
-                /*con.query(
-                 'INSERT INTO logs(level, message, json, created) VALUES(?,?,?,?)',
+                con.query(
+                 'INSERT INTO logs(level, message, json, created) VALUES(?, ?, ?, ?)',
                  [
                   obj.level,
                   JSON.stringify(obj.msg),
                   JSON.stringify(obj),
-                  new Date(1000*obj.time)
-                 ],
-                 function (err, result) {});
-
-                 */
-
-                con.query(
-                 'INSERT INTO logs(json, level) VALUES(?, ?)',
-                 [
-                  JSON.stringify(obj),
-                  1
+                  new Date(obj.time)
                  ],
                  function (err, result) {});
 
