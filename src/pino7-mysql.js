@@ -23,12 +23,13 @@ export default async function (opts) {
         async function (source) {
             for await (let obj of source) {
 
-                console.log('ooobj', obj);
+                //console.log('ooobj', obj);
 
                 con.query(
-                 'INSERT INTO logs(level, message, json, created) VALUES(?, ?, ?, ?)',
+                 'INSERT INTO logs(level, topic, message, json, created) VALUES(?, ?, ?, ?, ?)',
                  [
                   obj.level,
+                  obj.name,
                   JSON.stringify(obj.msg),
                   JSON.stringify(obj),
                   new Date(obj.time)
