@@ -5,7 +5,8 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 
-
+    const ecsFormat = require('@elastic/ecs-pino-format')()
+const pinoElastic = require('pino-elasticsearch')
 //const logdir = process.env.LOGDIR || '/tmp/'
 
 
@@ -76,22 +77,45 @@ export function reconfigureLogging(app_config) {
   streams.push(tr)
  }
 
-
- /*conf = config.elasticsearch;
+/* conf = config.elasticsearch;
  if (conf?.enabled) {
   //console.log('log.elasticsearch', conf)
+  const streamToElastic = pinoElastic({
+    index: 'logs-pino-yellow-server',
+    node: 'https://localhost:9200',
+    auth: {username: 'elastic', password: 'changeme'},
+    rejectUnauthorized: false,
+    flushInterval: 500,
+    flushBytes: 100
+  });
+  streamToElastic.on(
+  'insertError',
+   (error) => {
+     const documentThatFailed = error.document;
+     console.log(`An error occurred insert document:`, documentThatFailed);
+   }
+  );
+  streamToElastic.on(
+   'error',
+   (error) => {
+    console.log(error);
+   });
+
+  streams.push({level: 0, stream: streamToElastic});
+  /!*
   let tr = pino.transport({
    target: 'pino-elasticsearch',
    options: {
     index: 'an-index',
     node: 'http://localhost:9200',
     esVersion: 7,
-    flushBytes: 1000
+    flushBytes: 100
    }
   });
+  *!/
  }*/
 
- globalPino = pino({level: config.level || 'debug'}, pino.multistream(streams));
+ globalPino = pino({level: config.level || 'debug', ...ecsFormat}, pino.multistream(streams));
 
  for (const logger of loggers) {
   logger.reconfigure();
@@ -152,7 +176,7 @@ export class Logger {
   if (typeof args[0] !== 'string') {
    corr = args.shift();
   }
-  corr = {...corr, args};
+  corr = {...corr/*, arguments: args*/};
 
 
   const d = new Date();
@@ -165,21 +189,13 @@ export class Logger {
    50: {text: 'ERROR', color: '\x1b[31m'},
    60: {text: 'FATAL', color: '\x1b[31m'}
   };
-  /*
-    '10': 'trace',
-    '20': 'debug',
-    '30': 'info',
-    '40': 'warn',
-    '50': 'error',
-    '60': 'fatal'
-  */
+
   let levelText = '???';
   let levelColorText = '????'
   if (levels[level]) {
    levelText = levels[level].text;
    levelColorText = this.name + '[' + levels[level].color + levelText + '\x1b[0m' + ']';
   }
-
 
   let conf = config.stdout
   if (!conf) {
@@ -226,17 +242,25 @@ export class Logger {
    return false;
   if (conf.level && level < conf.level)
    return false;
-  const matchers = conf.levels || {}
+  const matchers = conf.levels || []
+  //console.log('filter');
   for (let matcher of matchers) {
+   //console.log('matcher', matcher);
    const key = Object.keys(matcher)[0];
    const val = matcher[key]
-   if (this.match(key, this.name))
-    return globalPino.levels.values[val] <= level
+   if (this.match(key, this.name)) {
+    const keep = globalPino.levels.values[val] <= level;
+    //console.log('matcher', key, val, level, this.name, keep);
+    return keep
+   }
   }
+  //console.log('no match', matchers, this.name);
+  return true;
  }
 
  match(key, name) {
-  if (key === 'name')
+  //console.log('match', key, name);
+  if (key === name)
    return true;
   if (key === '*')
    return true;

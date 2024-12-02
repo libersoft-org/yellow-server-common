@@ -4,15 +4,23 @@
   "description": "common",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
   },
   "author": "",
   "dependencies": {
+    "@elastic/ecs-pino-format": "^1.5.0",
     "async-mutex": "^0.5.0",
     "mariadb": "2",
     "mysql": "^2.18.1",
     "pino": "8",
+    "pino-elasticsearch": "^8.1.0",
     "pino-pretty": "^13.0.0",
     "sql-client": "^3.0.0"
+  },
+  "devDependencies": {
+    "git-format-staged": "^3.1.1",
+    "husky": "^9.1.7",
+    "prettier": "^3.4.1"
   }
 }
