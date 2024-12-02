@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 
-           const ecsFormat = require('@elastic/ecs-pino-format')()
+            const ecsFormat = require('@elastic/ecs-pino-format')()
 const pinoElastic = require('pino-elasticsearch')
 //const logdir = process.env.LOGDIR || '/tmp/'
 
