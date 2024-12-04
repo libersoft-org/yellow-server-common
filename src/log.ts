@@ -46,7 +46,7 @@ export function reconfigureLogging(app_config) {
  let conf;
 
 
- /*conf = config.stdout;
+ conf = config.pino_stdout;
  if (conf?.enabled) {
   streams.push(pino.transport({
     target: './pino7-pretty',
@@ -55,7 +55,7 @@ export function reconfigureLogging(app_config) {
       colorize: true
     }
   }))
- }*/
+ }
 
 
  conf = config.json;
@@ -73,11 +73,18 @@ export function reconfigureLogging(app_config) {
   let tr = pino.transport({
     target: './pino7-mysql.js',
     options: conf.database || app_config.database
-  })
+  });
+
+  tr.on(
+   'error',
+   (error) => {
+    console.log(error);
+   });
+
   streams.push(tr)
  }
 
-/* conf = config.elasticsearch;
+conf = config.elasticsearch;
  if (conf?.enabled) {
   //console.log('log.elasticsearch', conf)
   const streamToElastic = pinoElastic({
@@ -88,6 +95,7 @@ export function reconfigureLogging(app_config) {
     flushInterval: 500,
     flushBytes: 100
   });
+
   streamToElastic.on(
   'insertError',
    (error) => {
@@ -95,6 +103,7 @@ export function reconfigureLogging(app_config) {
      console.log(`An error occurred insert document:`, documentThatFailed);
    }
   );
+
   streamToElastic.on(
    'error',
    (error) => {
@@ -102,18 +111,7 @@ export function reconfigureLogging(app_config) {
    });
 
   streams.push({level: 0, stream: streamToElastic});
-  /!*
-  let tr = pino.transport({
-   target: 'pino-elasticsearch',
-   options: {
-    index: 'an-index',
-    node: 'http://localhost:9200',
-    esVersion: 7,
-    flushBytes: 100
-   }
-  });
-  *!/
- }*/
+ }
 
  globalPino = pino({level: config.level || 'debug', ...ecsFormat}, pino.multistream(streams));
 

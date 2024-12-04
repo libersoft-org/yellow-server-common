@@ -23,25 +23,33 @@ export default async function (opts) {
         async function (source) {
             for await (let obj of source) {
 
-                //console.log('ooobj', obj);
+                try {
 
-                con.query(
-                 'INSERT INTO logs(level, topic, message, json, created) VALUES(?, ?, ?, ?, ?)',
-                 [
-                  obj.level,
-                  obj.name,
-                  JSON.stringify(obj.msg),
-                  JSON.stringify(obj),
-                  new Date(obj.time)
-                 ],
-                 function (err, result) {});
+                 console.log('ooobj', obj);
 
-                const toDrain = !destination.write(obj.msg.toUpperCase() + '\n')
+                 con.query(
+                  'INSERT INTO logs(level, topic, message, json, created) VALUES(?, ?, ?, ?, ?)',
+                  [
+                   obj.level,
+                   obj.name,
+                   JSON.stringify(obj.msg),
+                   JSON.stringify(obj),
+                   new Date(obj.time)
+                  ],
+                  function (err, result) {
+                  });
 
-                // This block will handle backpressure
-                if (toDrain) {
-                    await once(destination, 'drain')
+                 const toDrain = !destination.write(JSON.stringify(obj) + '\n');
+
+                 // This block will handle backpressure
+                 if (toDrain) {
+                  await once(destination, 'drain')
+                 }
                 }
+                catch (e) {
+                 console.log('Error:', e);
+                }
+
             }
         },
         {
