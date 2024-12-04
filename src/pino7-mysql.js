@@ -25,7 +25,7 @@ export default async function (opts) {
 
                 try {
 
-                 console.log('ooobj', obj);
+                 //console.log('ooobj', obj);
 
                  con.query(
                   'INSERT INTO logs(level, topic, message, json, created) VALUES(?, ?, ?, ?, ?)',
