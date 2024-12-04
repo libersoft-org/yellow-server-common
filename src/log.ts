@@ -4,8 +4,9 @@ const pretty = require('pino-pretty')
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
+var mysql = require('mysql');
 
-     const ecsFormat = require('@elastic/ecs-pino-format')()
+      const ecsFormat = require('@elastic/ecs-pino-format')()
 const pinoElastic = require('pino-elasticsearch')
 //const logdir = process.env.LOGDIR || '/tmp/'
 
@@ -26,6 +27,7 @@ let globalPino = pino({name: 'log', level: 'debug'}, pino.multistream(
 ));
 
 
+let con;
 
 
 let loggers: any = []; // todo: weakref
@@ -57,7 +59,6 @@ export function reconfigureLogging(app_config) {
   }))
  }
 
-
  conf = config.json;
  if (conf?.enabled) {
   console.log('log.json', conf)
@@ -65,11 +66,10 @@ export function reconfigureLogging(app_config) {
   streams.push({level: conf.level, stream: createSonicBoom(conf.name)});
  }
 
-
  conf = config.database;
  if (conf?.enabled)
  {
-  //console.log('log.database', conf)
+  //console.log('log.pino_database', conf)
   let tr = pino.transport({
     target: './pino7-mysql.js',
     options: conf.database || app_config.database
@@ -84,7 +84,18 @@ export function reconfigureLogging(app_config) {
   streams.push(tr)
  }
 
-conf = config.elasticsearch;
+ /*conf = config.database;
+ if (conf?.enabled)
+ {
+  let opts = conf.database || app_config.database;
+  con = mysql.createConnection({...opts, database: opts.name});
+  con.connect(function(err) {
+    if (err) console.log(err);
+    else console.log("Connected!");
+  });
+ }*/
+
+ conf = config.elasticsearch;
  if (conf?.enabled) {
   //console.log('log.elasticsearch', conf)
   const streamToElastic = pinoElastic({
@@ -217,6 +228,11 @@ export class Logger {
   if (conf?.enabled) {
    this.logToFile(conf, date, msgNocolor, levelText);
   }
+
+  /*conf = config.database;
+  if (conf?.enabled) {
+
+  }*/
 
 
   if (level <= 10)
