@@ -20,7 +20,6 @@
   },
   "devDependencies": {
     "git-format-staged": "^3.1.1",
-    "husky": "^9.1.7",
     "prettier": "^3.4.1"
   }
 }
