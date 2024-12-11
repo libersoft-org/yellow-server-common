@@ -167,6 +167,8 @@ export class Logger {
    this.myPino = this.parent.myPino.child({name: this.name, ...this.opts});
   else
    this.myPino = globalPino.child({name: this.name});
+  if (this.parent)
+   this.appPath = this.parent.appPath;
  }
 
 
