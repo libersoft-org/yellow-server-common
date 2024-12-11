@@ -12,7 +12,6 @@ export class ModuleAppBase {
   this.info = {
    appName: 'Yellow Server Module',
    appVersion: '0.01',
-   appPath: path.dirname(import.meta.dir) + '/',
    settingsFile: import.meta.env.VITE_YELLOW_SETTINGS_PATH || path.join(appPath, 'settings.json'),
    ...info
   }

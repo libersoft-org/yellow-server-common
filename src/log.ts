@@ -6,7 +6,7 @@ const path = require('path')
 const os = require('os')
 var mysql = require('mysql');
 
-      const ecsFormat = require('@elastic/ecs-pino-format')()
+const ecsFormat = require('@elastic/ecs-pino-format')()
 const pinoElastic = require('pino-elasticsearch')
 //const logdir = process.env.LOGDIR || '/tmp/'
 
@@ -32,11 +32,12 @@ let con;
 
 let loggers: any = []; // todo: weakref
 let config = {};
-
+let _appPath;
 
 
 export function reconfigureLogging(app_config) {
 
+ _appPath = app_config.appPath;
  config = app_config?.log;
 
  if (!config) {
@@ -167,8 +168,6 @@ export class Logger {
    this.myPino = this.parent.myPino.child({name: this.name, ...this.opts});
   else
    this.myPino = globalPino.child({name: this.name});
-  if (this.parent)
-   this.appPath = this.parent.appPath;
  }
 
 
@@ -289,7 +288,7 @@ export class Logger {
   if (conf.name.startsWith('/')) {
    file = conf.name;
   } else {
-   file = path.join(this.appPath + conf.name);
+   file = path.join(_appPath + conf.name);
   }
   fs.appendFileSync(file, date + ' [' + levelText + '] ' + msg + os.EOL);
  }
