@@ -10,7 +10,6 @@ const ecsFormat = require('@elastic/ecs-pino-format')()
 const pinoElastic = require('pino-elasticsearch')
 //const logdir = process.env.LOGDIR || '/tmp/'
 
-
 const createSonicBoom = (dest) =>
  pino.destination({dest: dest, append: true, sync: true})
 
