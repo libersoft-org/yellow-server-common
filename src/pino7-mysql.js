@@ -6,13 +6,21 @@ import SonicBoom from 'sonic-boom'
 
 export default async function (opts) {
 
-    var con = mysql.createConnection({...opts, database: opts.name});
+    opts = {...opts, database: opts.name};
+    console.log('pino7-mysql opts:', opts);
+
+    var con = mysql.createConnection(opts);
 
     let p = new Promise((resolve, reject) => {
      con.connect(function (err) {
-         if (err) reject();
-         console.log("pino7-mysql connected to database.");
-         resolve();
+         if (err) {
+          console.log("pino7-mysql error: ", err);
+          reject();
+         }
+         else {
+          console.log("pino7-mysql connected to database.");
+          resolve();
+         }
      })});
 
     const destination = new SonicBoom({dest: '/tmp/pino7-mysql-transport-debug.log', sync: false})

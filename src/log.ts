@@ -38,6 +38,8 @@ let _appPath;
 export function reconfigureLogging(app_config) {
 
  _appPath = app_config.appPath;
+ console.log('reconfigureLogging _appPath:', _appPath);
+
  config = app_config?.log;
 
  if (!config) {
