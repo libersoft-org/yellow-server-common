@@ -92,7 +92,7 @@ export class ModuleAppBase {
   const api = this.api;
   return {
    message: async (ws, message) => {
-    Log.info('WebSocket message from: ', ws.remoteAddress, ', message: ', message);
+    Log.debug('WebSocket message from: ', ws.remoteAddress, ', message: ', message);
     const res = await api.processWsMessage(ws, message);
     if (res) {
      Log.info('WebSocket response to: ', ws.remoteAddress, ', message: ', res);
