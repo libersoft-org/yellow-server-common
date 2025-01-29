@@ -1,5 +1,5 @@
 import path from 'path';
-import { newLogger } from './log';
+import {newLogger, reconfigureLogging} from './log';
 
 const Log = newLogger('module-app-base');
 
@@ -9,6 +9,7 @@ export class ModuleAppBase {
  public info: any;
 
  constructor(info, appPath) {
+  this.appPath = appPath;
   this.info = {
    appName: 'Yellow Server Module',
    appVersion: '0.01',
@@ -27,10 +28,6 @@ export class ModuleAppBase {
      user: 'yellow_module_org_libersoft_messages',
      password: 'password',
      name: 'yellow_module_org_libersoft_messages'
-    },
-    other: {
-     log_file: 'module-messages.log',
-     log_to_file: true
     }
    };
  }
@@ -60,6 +57,7 @@ export class ModuleAppBase {
    Log.info(header);
    Log.info(dashes);
    Log.info('');
+   reconfigureLogging({ appPath: this.appPath, ...this.info.settings });
    await this.init();
    await this.checkDatabase();
    await Bun.serve({
