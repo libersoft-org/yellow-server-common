@@ -1,5 +1,6 @@
 import path from 'path';
 import {newLogger, reconfigureLogging} from './log';
+import {websocketOptions} from "./websocket-options";
 
 const Log = newLogger('module-app-base');
 
@@ -89,6 +90,7 @@ export class ModuleAppBase {
  getWebSocket() {
   const api = this.api;
   return {
+   ...websocketOptions(this.info.settings),
    message: async (ws, message) => {
     Log.debug('WebSocket message from: ', ws.remoteAddress, ', message: ', message);
     const res = await api.processWsMessage(ws, message);
