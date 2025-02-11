@@ -289,7 +289,7 @@ export class Logger {
   if (conf.name.startsWith('/')) {
    file = conf.name;
   } else {
-   file = path.join(_appPath + conf.name);
+   file = path.join(_appPath, conf.name);
   }
   fs.appendFileSync(file, date + ' [' + levelText + '] ' + msg + os.EOL);
  }
