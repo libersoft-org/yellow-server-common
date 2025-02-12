@@ -37,6 +37,7 @@ class Database {
       initializationTimeout: 1000,
       leakDetectionTimeout: 10000,
       connectionLimit: 10,
+      timezone: 'Z',
     };
     this.cluster = null;
   }
