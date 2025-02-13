@@ -55,7 +55,7 @@ export function reconfigureLogging(app_config) {
   streams.push(pino.transport({
     target: './pino7-pretty',
     options: {
-      minimumLevel: conf.level,
+      minimumLevel: conf.level === undefined ? 'info' : conf.level,
       colorize: true
     }
   }))
@@ -256,7 +256,7 @@ export class Logger {
  filter(level, conf) {
   if (!conf?.enabled)
    return false;
-  if (conf.level && level < conf.level)
+  if ((conf.level !== undefined) && level < conf.level)
    return false;
   const matchers = conf.levels || []
   //console.log('filter');
