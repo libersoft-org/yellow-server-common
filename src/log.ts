@@ -214,21 +214,25 @@ export class Logger {
    console.log(...msgWithColor);
   }
   else if (conf?.enabled) {
-   const msgWithColor = this.formatWithColor(args, levelColorText, date);
-   if (this.filter(level, conf))
+   if (this.filter(level, conf)) {
+    const msgWithColor = this.formatWithColor(args, levelColorText, date);
     console.log(...msgWithColor);
+   }
   }
 
 
-  const msgNocolor = this.formatNoColor(args);
-  if (level > 40) {
-   console.error(msgNocolor);
-  }
 
+  let file_conf = config.file
 
-  conf = config.file
-  if (conf?.enabled) {
-   this.logToFile(conf, date, msgNocolor, levelText);
+  if (level > 40 || file_conf?.enabled) {
+   const msgNocolor = this.formatNoColor(args);
+
+   if (level > 40) {
+    console.error(msgNocolor);
+   }
+   if (file_conf?.enabled) {
+    this.logToFile(file_conf, date, msgNocolor, levelText);
+   }
   }
 
   /*conf = config.database;
