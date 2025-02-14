@@ -180,8 +180,27 @@ export class Logger {
  error  (...args: any[]) {this.log(globalPino.levels.values.error, args);}
  fatal  (...args: any[]) {this.log(globalPino.levels.values.fatal, args);}
 
+ /**
+  * Immutable function to truncate all strings in an object to a maximum length.
+  * todo: move to utils
+  *
+  * @param obj
+  * @param maxLength
+  */
+ truncateStrings(obj: any, maxLength = 255) {
+   if (typeof obj === 'string') {
+     return obj.length > maxLength ? obj.slice(0, maxLength) : obj;
+   } else if (Array.isArray(obj)) {
+     return obj.map(item => this.truncateStrings(item, maxLength));
+   } else if (typeof obj === 'object' && obj !== null) {
+     return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, this.truncateStrings(value, maxLength)]));
+   }
+   return obj;
+ }
 
- log(level: Number, args: any[]): void {
+ log(level: Number, _args: any[]): void {
+  const maxCharsPerString = 255; // todo add to settings
+  const args = _args.map(arg => this.truncateStrings(arg, maxCharsPerString));
 
   let corr = {};
   if (typeof args[0] !== 'string') {
