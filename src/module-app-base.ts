@@ -92,10 +92,10 @@ export class ModuleAppBase {
   return {
    ...websocketOptions(this.info.settings),
    message: async (ws, message) => {
-    Log.trace('WebSocket message from: ', ws.remoteAddress, ', message: ', message);
+    Log.debug('WebSocket message from: ', ws.remoteAddress, ', message: ', message);
     const res = await api.processWsMessage(ws, message);
     if (res) {
-     Log.trace('WebSocket response to: ', ws.remoteAddress, ', message: ', res);
+     Log.debug('WebSocket response to: ', ws.remoteAddress, ', message: ', res);
      ws.send(JSON.stringify(res));
     }
    },
