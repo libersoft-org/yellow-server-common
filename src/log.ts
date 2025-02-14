@@ -189,7 +189,8 @@ export class Logger {
   */
  truncateStrings(obj: any, maxLength = 255) {
    if (typeof obj === 'string') {
-     return obj.length > maxLength ? obj.slice(0, maxLength) : obj;
+     const loggerInfo = `... [truncated string from ${obj.length} length to ${maxLength} by logger]`
+     return obj.length > maxLength ? obj.slice(0, maxLength) + loggerInfo : obj;
    } else if (Array.isArray(obj)) {
      return obj.map(item => this.truncateStrings(item, maxLength));
    } else if (typeof obj === 'object' && obj !== null) {
