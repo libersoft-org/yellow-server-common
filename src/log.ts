@@ -263,7 +263,7 @@ export class Logger {
   if (level <= 10)
    this.myPino.trace(corr, ...args);
   else if (level <= 20)
-   this.myPino.trace(corr, ...args);
+   this.myPino.debug(corr, ...args);
   else if (level <= 30)
    this.myPino.info(corr, ...args);
   else if (level <= 40)
