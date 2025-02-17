@@ -28,7 +28,7 @@ export class Signals {
     if (!clientData) return { error: 4, message: 'Client not found' };
     clientData.subscriptions.add(c.params.event);
     Log.debug('Client ' + c.ws.remoteAddress + ' subscribed to event: ' + c.params.event);
-    return { error: 0, message: 'Event subscribed' };
+    return { error: false, message: 'Event subscribed' };
   }
 
   notify(event: string, data: any) {
@@ -39,7 +39,7 @@ export class Signals {
         this.send(wsGuid, clientData, msg);
       }
     }
-    return { error: 0, message: 'Event sent' };
+    return { error: false, message: 'Event sent' };
   }
 
   notifyUser(userID: string, event: string, data: any) {
@@ -63,6 +63,6 @@ export class Signals {
       return { error: 5, message: 'Client is not subscribed to this event' };
     }
     clientData.subscriptions.delete(c.params.event);
-    return { error: 0, message: 'Event unsubscribed' };
+    return { error: false, message: 'Event unsubscribed' };
   }
 }
