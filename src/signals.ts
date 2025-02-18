@@ -45,10 +45,14 @@ export class Signals {
   notifyUser(userID: string, event: string, data: any) {
     Log.debug('Notify user: ' + userID + ', event: ' + event + ', data: ', data);
     for (const [wsGuid, clientData] of this.clients) {
-      if (clientData.userID === userID && clientData.subscriptions?.has(event)) {
-        const msg = { event, data };
-        Log.debug('Send event to: ' + wsGuid + ', message: ', (msg));
+     Log.debug('checking wsGuid: ' + wsGuid);
+      if (clientData.userID === userID) {
+       Log.debug('User found: ' + userID);
+       if (clientData.subscriptions?.has(event)) {
+        Log.debug('Send event to: ' + wsGuid);
+        const msg = {event, data};
         this.send(wsGuid, clientData, msg);
+       }
       }
     }
   }

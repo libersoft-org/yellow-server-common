@@ -39,7 +39,7 @@ export class ApiCore {
     if (this.ws) {
       this.ws.send(JSON.stringify(msg));
     } else {
-      Log.error('WebSocket is not defined.');
+      Log.error('this.ws is not defined.');
     }
   }
 }
