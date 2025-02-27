@@ -45,7 +45,7 @@ export class Signals {
   notifyUser(userID: string, event: string, data: any) {
     Log.debug('Notify user: ' + userID + ', event: ' + event + ', data: ', data);
     for (const [wsGuid, clientData] of this.clients) {
-     Log.debug('checking wsGuid: ' + wsGuid);
+     //Log.debug('checking wsGuid: ' + wsGuid);
       if (clientData.userID === userID) {
        Log.debug('User found: ' + userID);
        if (clientData.subscriptions?.has(event)) {
