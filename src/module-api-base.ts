@@ -82,7 +82,6 @@ export class ModuleApiBase {
     }
     catch (ex) {
       Log.error('processWsMessage error:', ex);
-      //throw;
       return {
        error: 999,
        message: 'Internal module error',
