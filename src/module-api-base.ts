@@ -67,8 +67,8 @@ export class ModuleApiBase {
       return this.processResponse(req);
      } else if (req.type === 'request') {
       return await this.processAPI(ws, req);
-     } else if (req.type === 'notify') {
-      this.processNotify(req.data);
+     } else if (req.type === 'server_command') {
+      this.processServerCommand(req.data);
      } else {
       Log.warning('Unknown message type:', req);
       return {
@@ -92,10 +92,9 @@ export class ModuleApiBase {
     }
   }
 
-  private processNotify(data: any) {
-   if (data.event === 'client_disconnect') {
+  private processServerCommand(data: any) {
+   if (data.cmd === 'client_disconnect') {
     let wsGuid = data.data.wsGuid;
-    this.signals.unsubscribe({ wsGuid, params: { event: 'client_disconnect' } });
     this.clients.delete(wsGuid);
    }
   }
