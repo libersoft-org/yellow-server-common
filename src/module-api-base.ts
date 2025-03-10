@@ -68,7 +68,7 @@ export class ModuleApiBase {
      } else if (req.type === 'request') {
       return await this.processAPI(ws, req);
      } else if (req.type === 'server_command') {
-      this.processServerCommand(req.data);
+      this.processServerCommand(req);
      } else {
       Log.warning('Unknown message type:', req);
       return {
@@ -81,7 +81,7 @@ export class ModuleApiBase {
      }
     }
     catch (ex) {
-      Log.error('processWsMessage error:', ex);
+      Log.error('processWsMessage error:', ex.message);
       return {
        error: 999,
        message: 'Internal module error',
@@ -94,7 +94,7 @@ export class ModuleApiBase {
 
   private processServerCommand(data: any) {
    if (data.cmd === 'client_disconnect') {
-    let wsGuid = data.data.wsGuid;
+    let wsGuid = data.wsGuid;
     this.clients.delete(wsGuid);
    }
   }

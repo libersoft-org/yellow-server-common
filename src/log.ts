@@ -101,7 +101,7 @@ export function reconfigureLogging(app_config) {
  if (conf?.enabled) {
   //console.log('log.elasticsearch', conf)
   const streamToElastic = pinoElastic({
-    index: 'logs-pino-yellow-server',
+    index: 'logs-pino-yellow',
     node: 'https://localhost:9200',
     auth: {username: 'elastic', password: 'changeme'},
     rejectUnauthorized: false,
