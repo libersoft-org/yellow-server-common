@@ -8,6 +8,7 @@ var mysql = require('mysql');
 
 const ecsFormat = require('@elastic/ecs-pino-format')()
 const pinoElastic = require('pino-elasticsearch')
+const { HTTPConnection } = require('@elastic/elasticsearch')
 //const logdir = process.env.LOGDIR || '/tmp/'
 
 const createSonicBoom = (dest) =>
@@ -101,10 +102,12 @@ export function reconfigureLogging(app_config) {
  if (conf?.enabled) {
   //console.log('log.elasticsearch', conf)
   const streamToElastic = pinoElastic({
+   Connection: HTTPConnection,
+   opType: 'create',
     index: 'logs-pino-yellow',
-    node: 'https://localhost:9200',
+    node: 'http://127.0.0.1:9200',
     auth: {username: 'elastic', password: 'changeme'},
-    rejectUnauthorized: false,
+    //rejectUnauthorized: false,
     flushInterval: 500,
     flushBytes: 100
   });
@@ -121,6 +124,7 @@ export function reconfigureLogging(app_config) {
    'error',
    (error) => {
     console.log(error);
+    console.log(error.message);
    });
 
   streams.push({level: 0, stream: streamToElastic});
