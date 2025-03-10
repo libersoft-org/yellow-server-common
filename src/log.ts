@@ -9,7 +9,7 @@ var mysql = require('mysql');
 const ecsFormat = require('@elastic/ecs-pino-format')()
 const pinoElastic = require('pino-elasticsearch')
 const { HTTPConnection } = require('@elastic/elasticsearch')
-//const logdir = process.env.LOGDIR || '/tmp/'
+
 
 const createSonicBoom = (dest) =>
  pino.destination({dest: dest, append: true, sync: true})
@@ -128,6 +128,13 @@ export function reconfigureLogging(app_config) {
    });
 
   streams.push({level: 0, stream: streamToElastic});
+
+  const otl = pino.transport({
+   target: 'pino-opentelemetry-transport'
+  })
+
+  streams.push(otl);
+
  }
 
  globalPino = pino({level: config.level || 'debug', ...ecsFormat}, pino.multistream(streams));
