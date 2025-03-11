@@ -129,9 +129,7 @@ export function reconfigureLogging(app_config) {
 
   streams.push({level: 0, stream: streamToElastic});
 
-  const otl = pino.transport({
-   target: 'pino-opentelemetry-transport'
-  })
+  const otl = pino.transport({target: 'pino-opentelemetry-transport', options: {level: 'debug'}});
 
   streams.push(otl);
 
