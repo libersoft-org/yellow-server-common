@@ -104,19 +104,19 @@ export function reconfigureLogging(app_config) {
   const streamToElastic = pinoElastic({
    Connection: HTTPConnection,
    opType: 'create',
-    index: 'logs-pino-yellow',
-    node: 'http://127.0.0.1:9200',
-    auth: {username: 'elastic', password: 'changeme'},
-    //rejectUnauthorized: false,
-    flushInterval: 500,
-    flushBytes: 100
+   index: 'logs-pino-yellow',
+   node: 'http://127.0.0.1:9200',
+   auth: {username: 'elastic', password: 'changeme'},
+   //rejectUnauthorized: false,
+   flushInterval: 500,
+   flushBytes: 100
   });
 
   streamToElastic.on(
-  'insertError',
+   'insertError',
    (error) => {
-     const documentThatFailed = error.document;
-     console.log(`An error occurred insert document:`, documentThatFailed);
+    const documentThatFailed = error.document;
+    console.log(`An error occurred insert document:`, documentThatFailed);
    }
   );
 
@@ -128,11 +128,12 @@ export function reconfigureLogging(app_config) {
    });
 
   streams.push({level: 0, stream: streamToElastic});
+ }
 
+ conf = config.opentelemetry;
+ if (conf?.enabled) {
   const otl = pino.transport({target: 'pino-opentelemetry-transport', options: {level: 'debug'}});
-
   streams.push(otl);
-
  }
 
  globalPino = pino({level: config.level || 'debug', ...ecsFormat}, pino.multistream(streams));
