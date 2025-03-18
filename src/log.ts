@@ -134,6 +134,9 @@ export function reconfigureLogging(app_config) {
  if (conf?.enabled) {
   const otl = pino.transport({target: 'pino-opentelemetry-transport', options: {level: 'debug'}});
   streams.push(otl);
+
+  //streams.push(pino.transport({target: 'pino-gelf-transport', options: {level: 'debug', host: 'localhost', port: 12201}}));
+
  }
 
  globalPino = pino({level: config.level || 'debug', ...ecsFormat}, pino.multistream(streams));

@@ -23,8 +23,8 @@ export default async function (opts) {
          }
      })});
 
-    const destination = new SonicBoom({dest: '/tmp/pino7-mysql-transport-debug.log', sync: false})
-    await once(destination, 'ready')
+    // const destination = new SonicBoom({dest: '/tmp/pino7-mysql-transport-debug.log', sync: false})
+    // await once(destination, 'ready')
     await p;
 
     return build(
@@ -47,12 +47,12 @@ export default async function (opts) {
                   function (err, result) {
                   });
 
-                 const toDrain = !destination.write(JSON.stringify(obj) + '\n');
-
-                 // This block will handle backpressure
-                 if (toDrain) {
-                  await once(destination, 'drain')
-                 }
+                 // const toDrain = !destination.write(JSON.stringify(obj) + '\n');
+                 //
+                 // // This block will handle backpressure
+                 // if (toDrain) {
+                 //  await once(destination, 'drain')
+                 // }
                 }
                 catch (e) {
                  console.log('Error:', e);
@@ -62,8 +62,8 @@ export default async function (opts) {
         },
         {
             async close(err) {
-                destination.end()
-                await once(destination, 'close')
+                //destination.end()
+                //await once(destination, 'close')
                 //await db?.close();
             }
         })
