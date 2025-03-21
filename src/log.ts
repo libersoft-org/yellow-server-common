@@ -139,6 +139,24 @@ export function reconfigureLogging(app_config) {
 
  }
 
+ conf = config.node_child_process_elasticsearch;
+ if (conf?.enabled)
+ {
+  let tr = pino.transport({
+   target: './pino7-node-elasticsearch.js',
+   options: conf
+  });
+
+  tr.on(
+   'error',
+   (error) => {
+    console.log(error);
+   });
+
+  streams.push(tr)
+ }
+
+
  globalPino = pino({level: config.level || 'debug', ...ecsFormat}, pino.multistream(streams));
 
  for (const logger of loggers) {
