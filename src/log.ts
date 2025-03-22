@@ -219,7 +219,7 @@ export class Logger {
   * @param obj
   * @param maxLength
   */
- truncateStrings(obj: any, maxLength = 255) {
+ truncateStrings(obj: any, maxLength = 2048) {
    if (typeof obj === 'string') {
      const loggerInfo = `... [truncated string from ${obj.length} length to ${maxLength} by logger]`
      return obj.length > maxLength ? obj.slice(0, maxLength) + loggerInfo : obj;
