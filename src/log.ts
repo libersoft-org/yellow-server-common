@@ -293,14 +293,15 @@ export class Logger {
   }
 
 
-
-  //console.log('level', level);
   if (level <= 10) {
-   //console.log('TRACE');
+   //console.log('TRACE', 'this.myPino.level:', this.myPino.level);
    this.myPino.trace(corr, msgNocolor);
+   this.myPino.info({...corr, real_level: level} , msgNocolor);
   }
-  else if (level <= 20)
+  else if (level <= 20) {
    this.myPino.debug(corr, msgNocolor);
+   this.myPino.info({...corr, real_level: level}, msgNocolor);
+  }
   else if (level <= 30)
    this.myPino.info(corr, msgNocolor);
   else if (level <= 40)

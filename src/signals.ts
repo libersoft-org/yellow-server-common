@@ -43,19 +43,31 @@ export class Signals {
   }
 
   notifyUser(userID: string, event: string, data: any, corr: object) {
-    Log.debug(corr, 'notifyUser: userID: ' + userID + ', event: ' + event + ', data: ', data);
-    for (const [wsGuid, clientData] of this.clients) {
-     //Log.debug('checking wsGuid: ' + wsGuid);
-      if (clientData.userID === userID) {
-       Log.debug(corr, 'User found, id: ' + userID);
-       if (clientData.subscriptions?.has(event)) {
-        Log.debug(corr, 'Send event to wsGuid ' + wsGuid);
-        const msg = {event, data};
-        this.send(wsGuid, clientData, msg);
-       }
+    const clients = this.userClients(userID);
+    const subscribed = [];
+    for (const clientData of clients) {
+      if (clientData.subscriptions?.has(event)) {
+        subscribed.push(clientData.wsGuid);
       }
     }
+   Log.debug(corr, 'notifyUser: userID: ' + userID + ', event: ' + event + ', data: ', data, ', clients: ', clients, ', subscribed: ', subscribed);
+   for (const wsGuid of subscribed) {
+        Log.trace(corr, 'Send event to wsGuid ' + wsGuid);
+        const msg = {event, data};
+        this.send(wsGuid, clientData, msg);
+    }
   }
+
+  userClients(userID: string) {
+   let r = [];
+   for (const [wsGuid, clientData] of this.clients) {
+    if (clientData.userID == userID) {
+     r.push(clientData);
+    }
+   }
+   return r
+  }
+
 
   unsubscribe(c: any) {
     if (!c.params) return { error: 1, message: 'Parameters are missing' };
