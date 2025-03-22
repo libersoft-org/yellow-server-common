@@ -6,7 +6,7 @@ const path = require('path')
 const os = require('os')
 var mysql = require('mysql');
 
-const ecsFormat = require('@elastic/ecs-pino-format')()
+const ecsFormat = require('@elastic/ecs-pino-format')({'level': 'trace'})
 const pinoElastic = require('pino-elasticsearch')
 const { HTTPConnection } = require('@elastic/elasticsearch')
 
@@ -16,7 +16,7 @@ const createSonicBoom = (dest) =>
 
 
 
-let globalPino = pino({name: 'log', level: 'debug'}, pino.multistream(
+let globalPino = pino({name: 'log', level: 'trace'}, pino.multistream(
  /*{
  stream: pretty({
   colorize: true,
@@ -49,6 +49,25 @@ export function reconfigureLogging(app_config) {
 
  let streams = [];
  let conf;
+
+
+
+ conf = config.node_child_process_elasticsearch;
+ if (conf?.enabled)
+ {
+  let tr = pino.transport({
+   target: './pino7-node-elasticsearch.js',
+   options: {level: 'trace'}
+  });
+
+  tr.on(
+   'error',
+   (error) => {
+    console.log(error);
+   });
+
+  streams.push(tr)
+ }
 
 
  conf = config.pino_stdout;
@@ -139,25 +158,7 @@ export function reconfigureLogging(app_config) {
 
  }
 
- conf = config.node_child_process_elasticsearch;
- if (conf?.enabled)
- {
-  let tr = pino.transport({
-   target: './pino7-node-elasticsearch.js',
-   options: {x:11111}
-  });
-
-  tr.on(
-   'error',
-   (error) => {
-    console.log(error);
-   });
-
-  streams.push(tr)
- }
-
-
- globalPino = pino({level: config.level || 'debug', ...ecsFormat}, pino.multistream(streams));
+ globalPino = pino({level: config.level || 'trace', ...ecsFormat}, pino.multistream(streams));
 
  for (const logger of loggers) {
   logger.reconfigure();
@@ -197,9 +198,9 @@ export class Logger {
 
  reconfigure() {
   if (this.opts)
-   this.myPino = this.parent.myPino.child({name: this.name, ...this.opts});
+   this.myPino = this.parent.myPino.child({name: this.name, ...this.opts}, {level: 'trace'});
   else
-   this.myPino = globalPino.child({name: this.name});
+   this.myPino = globalPino.child({name: this.name}, {level: 'trace'});
  }
 
 
@@ -292,9 +293,12 @@ export class Logger {
   }
 
 
-  
-  if (level <= 10)
+
+  //console.log('level', level);
+  if (level <= 10) {
+   //console.log('TRACE');
    this.myPino.trace(corr, msgNocolor);
+  }
   else if (level <= 20)
    this.myPino.debug(corr, msgNocolor);
   else if (level <= 30)
