@@ -50,7 +50,7 @@ export class Signals {
         subscribed.set(wsGuid, clientData);
       }
     }
-   Log.debug(corr, 'notifyUser: userID: ' + userID + ', event: ' + event + ', data: ', data, ', clients: ', clients, ', subscribed: ', subscribed);
+   Log.trace(corr, 'notifyUser:  userID: ' + userID + ', event: ' + event + ', data: ', data, ', clients: ', Array.from(clients.keys()), ', subscribed: ', Array.from(subscribed.keys()));
    for (const [wsGuid, clientData] of subscribed.entries())
    {
         Log.trace(corr, 'Send event to wsGuid ' + wsGuid);
