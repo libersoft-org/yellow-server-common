@@ -44,14 +44,15 @@ export class Signals {
 
   notifyUser(userID: string, event: string, data: any, corr: object) {
     const clients = this.userClients(userID);
-    const subscribed = [];
-    for (const clientData of clients) {
+    const subscribed = new Map();
+    for (const [wsGuid, clientData] of clients.entries()) {
       if (clientData.subscriptions?.has(event)) {
-        subscribed.push(clientData.wsGuid);
+        subscribed.set(wsGuid, clientData);
       }
     }
    Log.debug(corr, 'notifyUser: userID: ' + userID + ', event: ' + event + ', data: ', data, ', clients: ', clients, ', subscribed: ', subscribed);
-   for (const wsGuid of subscribed) {
+   for (const [wsGuid, clientData] of subscribed.entries())
+   {
         Log.trace(corr, 'Send event to wsGuid ' + wsGuid);
         const msg = {event, data};
         this.send(wsGuid, clientData, msg);
@@ -59,10 +60,10 @@ export class Signals {
   }
 
   userClients(userID: string) {
-   let r = [];
+   let r = new Map();
    for (const [wsGuid, clientData] of this.clients) {
     if (clientData.userID == userID) {
-     r.push(clientData);
+     r.set(wsGuid, clientData);
     }
    }
    return r
