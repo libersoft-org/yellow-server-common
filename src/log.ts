@@ -144,7 +144,7 @@ export function reconfigureLogging(app_config) {
  {
   let tr = pino.transport({
    target: './pino7-node-elasticsearch.js',
-   options: conf
+   options: {x:11111}
   });
 
   tr.on(
@@ -237,8 +237,11 @@ export class Logger {
   let corr = {};
   if (typeof args[0] !== 'string') {
    corr = args.shift();
+   if (corr === undefined) {
+    corr = {};
+   }
   }
-  corr = {...corr/*, arguments: args*/};
+  //corr = {...corr/*, arguments: args*/};
 
 
   const d = new Date();
@@ -275,8 +278,10 @@ export class Logger {
 
   let file_conf = config.file
 
+  const msgNocolor = this.formatNoColor(args);
+
   if (level > 40 || file_conf?.enabled) {
-   const msgNocolor = this.formatNoColor(args);
+   //const msgNocolor = this.formatNoColor(args);
 
    if (level > 40) {
     console.error(msgNocolor);
@@ -286,24 +291,20 @@ export class Logger {
    }
   }
 
-  /*conf = config.database;
-  if (conf?.enabled) {
 
-  }*/
-
-
+  
   if (level <= 10)
-   this.myPino.trace(corr, ...args);
+   this.myPino.trace(corr, msgNocolor);
   else if (level <= 20)
-   this.myPino.debug(corr, ...args);
+   this.myPino.debug(corr, msgNocolor);
   else if (level <= 30)
-   this.myPino.info(corr, ...args);
+   this.myPino.info(corr, msgNocolor);
   else if (level <= 40)
-   this.myPino.warn(corr, ...args);
+   this.myPino.warn(corr, msgNocolor);
   else if (level <= 50)
-   this.myPino.error(corr, ...args);
+   this.myPino.error(corr, msgNocolor);
   else
-   this.myPino.fatal(corr, ...args);
+   this.myPino.fatal(corr, msgNocolor);
 
  }
 

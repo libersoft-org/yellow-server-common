@@ -21,6 +21,7 @@ interface Request {
     params?: any;
   };
   result?: any;
+  corr: object;
 }
 
 interface Response {
@@ -124,8 +125,13 @@ export class ModuleApiBase {
  }
 
  async processAPI(ws: any, req: Request): Promise<Response> {
-    if (this.core.ws && this.core.ws !== ws) console.info('update APICore ws.');
-    this.core.ws = ws;
+    if (this.core.ws !== ws) {
+     console.info('Updating server ws. Old ws:', this.core.ws?.remoteAddress, 'New ws:', ws.remoteAddress);
+     this.core.ws = ws;
+    }
+
+    let corr = req.corr;
+    Log.debug('corr:', corr);
 
     let resp: Response = { type: 'response' };
 
@@ -133,13 +139,13 @@ export class ModuleApiBase {
     if (req.wsGuid) resp.wsGuid = req.wsGuid;
 
     let command = req.data?.command;
-    Log.debug('API command: ' + command);
+    Log.debug(corr, 'API command: ' + command);
 
     if (!command) return { ...resp, error: 999, message: 'Command not set' };
     const command_fn = this.commands[command];
     if (!command_fn) return { ...resp, error: 903, message: 'Unknown API command' };
 
-    const context = { ws, wsGuid: req.wsGuid, userID: req.userID, userAddress: req.userAddress };
+    const context = { ws, wsGuid: req.wsGuid, userID: req.userID, userAddress: req.userAddress, corr };
     this.updateUserData(context);
 
     if (command_fn.reqUserSession && !req.sessionID) {

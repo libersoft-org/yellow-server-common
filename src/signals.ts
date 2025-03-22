@@ -42,14 +42,14 @@ export class Signals {
     return { error: false, message: 'Event sent' };
   }
 
-  notifyUser(userID: string, event: string, data: any) {
-    Log.debug('Notify user: ' + userID + ', event: ' + event + ', data: ', data);
+  notifyUser(userID: string, event: string, data: any, corr: object) {
+    Log.debug(corr, 'notifyUser: userID: ' + userID + ', event: ' + event + ', data: ', data);
     for (const [wsGuid, clientData] of this.clients) {
      //Log.debug('checking wsGuid: ' + wsGuid);
       if (clientData.userID === userID) {
-       Log.debug('User found: ' + userID);
+       Log.debug(corr, 'User found, id: ' + userID);
        if (clientData.subscriptions?.has(event)) {
-        Log.debug('Send event to: ' + wsGuid);
+        Log.debug(corr, 'Send event to wsGuid ' + wsGuid);
         const msg = {event, data};
         this.send(wsGuid, clientData, msg);
        }
