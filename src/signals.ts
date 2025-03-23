@@ -31,11 +31,11 @@ export class Signals {
     return { error: false, message: 'Event subscribed' };
   }
 
-  notify(event: string, data: any) {
+  notify(corr, event: string, data: any) {
     for (const [wsGuid, clientData] of this.clients) {
       if (clientData.subscriptions?.has(event)) {
         const msg = { event, data };
-        Log.debug('Send event to: ' + wsGuid + ', message: ', (msg));
+        Log.debug(corr, 'Send event to: ' + wsGuid + ', message: ', (msg));
         this.send(wsGuid, clientData, msg);
       }
     }

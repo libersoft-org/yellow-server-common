@@ -292,6 +292,7 @@ export class Logger {
    }
   }
 
+  //console.log('corr: ', corr);
 
   if (level <= 10) {
    //console.log('TRACE', 'this.myPino.level:', this.myPino.level);
