@@ -3,7 +3,7 @@ import {spawn} from 'child_process'
 
 export default async function (opts) {
 
- const child = spawn('/usr/bin/node', ['/app/app/src/node_modules/pino-elasticsearch/cli.js', '-u', 'yellow', '-p', 'yellow', 'http://localhost:9200'], { stdio: ['pipe', 'inherit', 'inherit'] } )
+ const child = spawn('/usr/bin/node', ['./node_modules/pino-elasticsearch/cli.js', '-u', 'yellow', '-p', 'yellow', 'http://localhost:9200'], { stdio: ['pipe', 'inherit', 'inherit'] } )
 
  return build(
   async function (source) {
