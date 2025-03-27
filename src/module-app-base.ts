@@ -153,6 +153,11 @@ export class ModuleAppBase {
    Log.info('Database is not yet created. Please run "./start.sh --create-database" first.', 2);
    process.exit(1);
   }
+  let r = await this.data.checkDatabase();
+  if (r !== null) {
+   console.log(r);
+   process.exit(1);
+  }
  }
 
  async createDatabase() {

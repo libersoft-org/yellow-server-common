@@ -9,7 +9,7 @@ const DEBUG = false;
 export default async function (opts) {
 
  opts = {...opts, database: opts.name};
- console.log('pino7-mysql opts:', opts);
+ //console.log('pino7-mysql opts:', opts);
 
  var con = mysql.createConnection(opts);
 
@@ -19,7 +19,7 @@ export default async function (opts) {
     console.log("pino7-mysql error: ", err);
     reject();
    } else {
-    console.log("pino7-mysql connected to database.");
+    //console.log("pino7-mysql connected to database.");
     resolve();
    }
   })

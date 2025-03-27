@@ -17,6 +17,10 @@ class DataGeneric {
   async databaseExists(): Promise<boolean> {
     return await this.db.databaseExists();
   }
+
+  async checkDatabase(): Promise<void> {
+  }
+
 }
 
 export default DataGeneric;
