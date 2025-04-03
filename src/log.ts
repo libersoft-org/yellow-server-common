@@ -56,7 +56,7 @@ export function reconfigureLogging(app_config) {
  if (conf?.enabled)
  {
   let tr = pino.transport({
-   target: path.resolve('./pino7-node-elasticsearch.js'),
+   target: path.resolve(__dirname, './pino7-node-elasticsearch.js'),
    options: {level: 'trace'}
   });
 
@@ -73,7 +73,7 @@ export function reconfigureLogging(app_config) {
  conf = config.pino_stdout;
  if (conf?.enabled) {
   streams.push(pino.transport({
-    target: path.resolve('./pino7-pretty'),
+    target: path.resolve(__dirname, './pino7-pretty'),
     options: {
       minimumLevel: conf.level === undefined ? 'info' : conf.level,
       colorize: true
@@ -93,7 +93,7 @@ export function reconfigureLogging(app_config) {
  {
   //console.log('log.pino_database', conf)
   let tr = pino.transport({
-    target: path.resolve('./pino7-mysql.js'),
+    target: path.resolve(__dirname, './pino7-mysql.js'),
     options: conf.database || app_config.database
   });
 
