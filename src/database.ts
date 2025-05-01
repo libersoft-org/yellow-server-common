@@ -16,6 +16,7 @@ class Database {
   settings: DatabaseSettings;
   connectionConfig: mariaDB.ConnectionConfig;
   connections: object;
+  cluster: mariaDB.PoolCluster | null;
 
   constructor(settings: DatabaseSettings) {
     if (!settings) {
@@ -43,13 +44,9 @@ class Database {
   }
 
   async connect(): Promise<void> {
-/*
-The createPoolCluster(options) → PoolCluster function does not return a Promise, and therefore must be wrapped in a new Promise object if its return value is returned directly from an async function.
- */
-
-    Log.trace('connect createPoolCluster');
-    this.cluster = await mariaDB.createPoolCluster({restoreNodeTimeout: 1000, removeNodeErrorCount: 999999999});
-    Log.trace('connect add');
+    Log.trace('connect createPoolCluster...');
+    this.cluster = mariaDB.createPoolCluster({restoreNodeTimeout: 1000, removeNodeErrorCount: 999999999});
+    Log.trace('connect add..');
     this.cluster.add("server1", this.connectionConfig);
     //this.cluster.add("server2", this.connectionConfig);
     //this.cluster.add("server3", this.connectionConfig);
@@ -77,10 +74,14 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
     this.cluster.on('error', err => {
      Log.error('Pool error:', err);
     });*/
+
+    /* attempt a connection to the database for verification */
     Log.trace('await this.cluster.getConnection()');
     let conn = await this.cluster.getConnection();
-    Log.info('connected to database. connection id:', conn.threadId);
-    conn.release();
+    const id = conn.threadId;
+    Log.info('connected to database. connection id:', id);
+    await conn.release();
+    Log.trace('test conn', id, 'released.');
   }
 
   async disconnect(): Promise<void> {
@@ -92,9 +93,9 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
   }
 
   async execute<T>(callback: (conn: mariaDB.Connection) => Promise<T>): Promise<T> {
-    //Log.trace('execute');
+    Log.trace('execute...');
     if (!this.cluster) {
-      Log.trace('execute connect');
+      Log.trace('execute: connect');
       await this.connect();
     }
 
@@ -139,9 +140,9 @@ The createPoolCluster(options) → PoolCluster function does not return a Promis
   }
 
   async databaseExists(): Promise<boolean> {
-    Log.trace('databaseExists');
+    Log.trace('databaseExists?...');
     return await this.execute(async conn => {
-      Log.trace('databaseExists execute');
+      Log.trace('databaseExists: find schema', this.settings.name, '...');
       const rows = await conn.query('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?', [this.settings.name]);
       return rows.length > 0;
     });

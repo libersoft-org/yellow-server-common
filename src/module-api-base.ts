@@ -126,7 +126,7 @@ export class ModuleApiBase {
 
  async processAPI(ws: any, req: Request): Promise<Response> {
     if (this.core.ws !== ws) {
-     console.info('Updating server ws. Old ws:', this.core.ws?.remoteAddress, 'New ws:', ws.remoteAddress);
+     Log.debug('Updating server ws. Old ws:', this.core.ws?.remoteAddress, 'New ws:', ws.remoteAddress);
      this.core.ws = ws;
     }
 
