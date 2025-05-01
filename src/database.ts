@@ -18,6 +18,7 @@ class Database {
   connections: object;
   cluster: mariaDB.PoolCluster | null;
 
+
   constructor(settings: DatabaseSettings) {
     if (!settings) {
       throw new Error('Database settings are missing');
@@ -35,13 +36,14 @@ class Database {
       metaAsArray: false,
       trace: import.meta.env.VITE_YELLOW_DEBUG,
       debug: import.meta.env.VITE_YELLOW_DB_DEBUG,
-      initializationTimeout: 1000,
+      initializationTimeout: 60000,
       leakDetectionTimeout: 10000,
       connectionLimit: 10,
       timezone: 'Z',
     };
     this.cluster = null;
   }
+
 
   async connect(): Promise<void> {
     Log.trace('connect createPoolCluster...');
@@ -84,6 +86,7 @@ class Database {
     Log.trace('test conn', id, 'released.');
   }
 
+
   async disconnect(): Promise<void> {
     if (this.cluster) {
       await this.cluster.end();
@@ -91,6 +94,7 @@ class Database {
       Log.info('Disconnected from the database');
     }
   }
+
 
   async execute<T>(callback: (conn: mariaDB.Connection) => Promise<T>): Promise<T> {
     Log.trace('execute...');
