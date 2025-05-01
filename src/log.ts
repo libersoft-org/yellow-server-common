@@ -55,6 +55,7 @@ export function reconfigureLogging(app_config) {
  conf = config.node_child_process_elasticsearch;
  if (conf?.enabled)
  {
+  console.log('log.node_child_process_elasticsearch:', JSON.stringify(conf));
   let tr = pino.transport({
    target: path.resolve(__dirname, './pino7-node-elasticsearch.js'),
    options: {level: 'trace'}
@@ -72,6 +73,7 @@ export function reconfigureLogging(app_config) {
 
  conf = config.pino_stdout;
  if (conf?.enabled) {
+  console.log('log.pino_stdout:', JSON.stringify(conf));
   streams.push(pino.transport({
     target: path.resolve(__dirname, './pino7-pretty'),
     options: {
@@ -83,7 +85,7 @@ export function reconfigureLogging(app_config) {
 
  conf = config.json;
  if (conf?.enabled) {
-  console.log('log.json', conf)
+  console.log('log.json:', JSON.stringify(conf));
   checkValidLevel(conf.level);
   streams.push({level: conf.level, stream: createSonicBoom(conf.name)});
  }
@@ -91,7 +93,7 @@ export function reconfigureLogging(app_config) {
  conf = config.database;
  if (conf?.enabled)
  {
-  //console.log('log.pino_database', conf)
+  console.log('log.database:', JSON.stringify(conf));
   let tr = pino.transport({
     target: path.resolve(__dirname, './pino7-mysql.js'),
     options: conf.database || app_config.database
@@ -119,7 +121,7 @@ export function reconfigureLogging(app_config) {
 
  conf = config.elasticsearch;
  if (conf?.enabled) {
-  //console.log('log.elasticsearch', conf)
+  console.log('log.elasticsearch:', JSON.stringify(conf));
   const streamToElastic = pinoElastic({
    Connection: HTTPConnection,
    opType: 'create',
@@ -151,6 +153,7 @@ export function reconfigureLogging(app_config) {
 
  conf = config.opentelemetry;
  if (conf?.enabled) {
+  console.log('log.opentelemetry:', JSON.stringify(conf));
   const otl = pino.transport({target: 'pino-opentelemetry-transport', options: {level: 'debug'}});
   streams.push(otl);
 
