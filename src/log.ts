@@ -267,32 +267,20 @@ export class Logger {
   }
 
   let conf = config.stdout
-  if (!conf) {
-   const msgWithColor = this.formatWithColor(args, levelColorText, date);
-   console.log(...msgWithColor);
-  }
-  else if (conf?.enabled) {
+  if (!conf || conf?.enabled) {
    if (this.filter(level, conf)) {
+    // todo use console.error for error objects?
     const msgWithColor = this.formatWithColor(args, levelColorText, date);
     console.log(...msgWithColor);
    }
   }
 
 
-
   let file_conf = config.file
 
   const msgNocolor = this.formatNoColor(args);
-
-  if (level > 40 || file_conf?.enabled) {
-   //const msgNocolor = this.formatNoColor(args);
-
-   if (level > 40) {
-    console.error(msgNocolor);
-   }
-   if (file_conf?.enabled) {
-    this.logToFile(file_conf, date, msgNocolor, levelText);
-   }
+  if (file_conf?.enabled) {
+   this.logToFile(file_conf, date, msgNocolor, levelText);
   }
 
   //console.log('corr: ', corr);
