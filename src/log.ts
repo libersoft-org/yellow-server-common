@@ -73,7 +73,7 @@ export function reconfigureLogging(app_config) {
 
  conf = config.pino_stdout;
  if (conf?.enabled) {
-  console.log('log.pino_stdout:', JSON.stringify(conf));
+  //console.log('log.pino_stdout:', JSON.stringify(conf));
   streams.push(pino.transport({
     target: path.resolve(__dirname, './pino7-pretty'),
     options: {
@@ -161,7 +161,7 @@ export function reconfigureLogging(app_config) {
 
  }
 
- globalPino = pino({level: config.level || 'trace', ...ecsFormat}, pino.multistream(streams));
+ globalPino = pino({level: config.level || 'info', ...ecsFormat}, pino.multistream(streams));
 
  for (const logger of loggers) {
   logger.reconfigure();
@@ -187,6 +187,7 @@ export class Logger {
  opts: any;
 
  constructor(name, parent = null, opts = null) {
+  //console.log('new logger', name, parent, opts);
   this.name = name;
   loggers.push(this);
   this.parent = parent;
@@ -200,6 +201,7 @@ export class Logger {
  }
 
  reconfigure() {
+  //console.log('reconfigure logger', this.name, this.opts);
   if (this.opts)
    this.myPino = this.parent.myPino.child({name: this.name, ...this.opts}, {level: 'trace'});
   else
@@ -235,6 +237,7 @@ export class Logger {
  }
 
  log(level: Number, _args: any[]): void {
+  //console.log('log', level, _args);
   const maxCharsPerString = 255; // todo add to settings
   const args = _args.map(arg => this.truncateStrings(arg, maxCharsPerString));
 
@@ -267,6 +270,7 @@ export class Logger {
   }
 
   let conf = config.stdout
+
   if (!conf || conf?.enabled) {
    if (this.filter(level, conf)) {
     // todo use console.error for error objects?
@@ -307,11 +311,11 @@ export class Logger {
 
 
  filter(level, conf) {
-  if (!conf?.enabled)
+  if (conf && !conf.enabled)
    return false;
-  if ((conf.level !== undefined) && level < conf.level)
+  if ((conf?.level !== undefined) && level < conf.level)
    return false;
-  const matchers = conf.levels || []
+  const matchers = conf?.levels || []
   //console.log('filter');
   for (let matcher of matchers) {
    //console.log('matcher', matcher);
