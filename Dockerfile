@@ -24,4 +24,3 @@ WORKDIR $APP_DIR
 
 RUN curl -fsSL https://bun.sh/install | bash
 
-CMD ["./start-docker-dev.sh"]
