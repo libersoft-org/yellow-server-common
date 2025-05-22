@@ -348,7 +348,12 @@ export class Logger {
   } else {
    file = path.join(_appPath, conf.name);
   }
-  fs.appendFileSync(file, date + ' [' + levelText + '] ' + msg + os.EOL);
+  try {
+   fs.appendFileSync(file, date + ' [' + levelText + '] ' + msg + os.EOL);
+  }
+  catch (e) {
+   console.log('Error writing to log file', file, e);
+  }
  }
 
 
