@@ -266,7 +266,7 @@ export class Logger {
   let levelColorText = '????'
   if (levels[level]) {
    levelText = levels[level].text;
-   levelColorText = this.name + '[' + levels[level].color + levelText + '\x1b[0m' + ']';
+   levelColorText = '[' + levels[level].color + levelText + '\x1b[0m' + '] ' + '[' + this.name  + ']';
   }
 
   let conf = config.stdout
